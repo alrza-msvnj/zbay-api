@@ -8,7 +8,6 @@ public class Shop
     public string InstagramUrl { get; set; }
     public string Name { get; set; }
     public uint Followers { get; set; }
-    public uint TotalProducts { get; set; }
     public string Logo { get; set; }
     public bool IsVerified { get; set; }
     public bool IsValidated { get; set; }

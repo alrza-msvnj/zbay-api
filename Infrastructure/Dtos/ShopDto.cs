@@ -1,0 +1,14 @@
+﻿namespace Infrastructure.Dtos;
+
+public class ShopDto
+{
+    public class ShopCreateDto
+    {
+        public required string InstagramId { get; set; }
+        public required string InstagramUrl { get; set; }
+        public required string Name { get; set; }
+        public uint Followers { get; set; }
+        public required string Logo { get; set; }
+        public bool IsVerified { get; set; }
+    }
+}
