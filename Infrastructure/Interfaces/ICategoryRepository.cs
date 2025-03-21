@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using static Infrastructure.Dtos.CategoryDto;
 
 namespace Application.Interfaces;
 
