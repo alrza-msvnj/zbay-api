@@ -4,11 +4,11 @@ public class Shop
 {
     public uint Id { get; set; }
     public Guid Uuid { get; set; }
-    public string InstagramId { get; set; }
-    public string InstagramUrl { get; set; }
-    public string Name { get; set; }
+    public required string InstagramId { get; set; }
+    public required string InstagramUrl { get; set; }
+    public required string Name { get; set; }
     public uint Followers { get; set; }
-    public string Logo { get; set; }
+    public required string Logo { get; set; }
     public uint OwnerId { get; set; }
     public bool IsVerified { get; set; }
     public bool IsValidated { get; set; }

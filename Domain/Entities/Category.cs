@@ -3,7 +3,7 @@
 public class Category
 {
     public ushort Id { get; set; }
-    public string Title { get; set; }
+    public required string Title { get; set; }
     public ushort? ParentId { get; set; }
 
     public virtual Category Parent { get; set; }

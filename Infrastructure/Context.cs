@@ -6,21 +6,11 @@ namespace Infrastructure;
 
 public class Context : DbContext
 {
-    private readonly IConfiguration _configuration;
-
-    public Context(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
+    public Context(DbContextOptions<Context> options) : base(options) { }
 
     public DbSet<User> User { get; set; }
     public DbSet<Shop> Shop { get; set; }
     public DbSet<Category> Category { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer(_configuration.GetConnectionString("Default"));
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,10 +26,6 @@ public class Context : DbContext
         modelBuilder.Entity<Shop>(e =>
         {
             e.HasKey(e => e.Id);
-
-            e.HasOne(s => s.Owner)
-            .WithOne(u => u.Shop)
-            .HasForeignKey<Shop>(s => s.OwnerId);
         });
 
         modelBuilder.Entity<Category>(e =>
