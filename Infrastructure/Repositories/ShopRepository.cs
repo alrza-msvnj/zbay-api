@@ -10,10 +10,12 @@ public class ShopRepository : IShopRepository
     #region Initialization
 
     private readonly Context _context;
+    private readonly IUserRepository _userRepository;
 
-    public ShopRepository(Context context)
+    public ShopRepository(Context context, IUserRepository userRepository)
     {
         _context = context;
+        _userRepository = userRepository;
     }
 
     #endregion
@@ -22,6 +24,13 @@ public class ShopRepository : IShopRepository
 
     public async Task<uint> CreateShop(ShopCreateDto shopCreateDto)
     {
+        var owner = await _userRepository.GetUserById(shopCreateDto.OwnerId);
+
+        if (owner is null)
+        {
+            throw new InvalidOperationException("Owner does not exist.");
+        }
+
         var shop = new Shop
         {
             Uuid = Guid.NewGuid(),
@@ -30,6 +39,7 @@ public class ShopRepository : IShopRepository
             Name = shopCreateDto.Name,
             Followers = shopCreateDto.Followers,
             Logo = shopCreateDto.Logo,
+            OwnerId = shopCreateDto.OwnerId,
             IsVerified = shopCreateDto.IsVerified,
             IsValidated = false,
             IsDeleted = false,
@@ -49,22 +59,27 @@ public class ShopRepository : IShopRepository
 
     public async Task<Shop> GetShopByUserId(uint userId)
     {
-        return await _context.Shop.FirstOrDefaultAsync(s => s.OwnerId == userId);
+        return await _context.Shop.FirstOrDefaultAsync(s => s.IsDeleted == false && s.OwnerId == userId);
     }
 
     public async Task<List<Shop>> GetAllShopsByPaging(ushort pageNumber, ushort pageSize)
     {
-        return await _context.Shop.Skip((pageNumber - 1) * pageSize).ToListAsync();
+        return await _context.Shop.Where(s => s.IsDeleted == false).Skip((pageNumber - 1) * pageSize).ToListAsync();
     }
 
     public async Task<List<Shop>> GetAllUnvalidatedShops()
     {
-        return await _context.Shop.Where(s => s.IsValidated == false).ToListAsync();
+        return await _context.Shop.Where(s => s.IsDeleted == false && s.IsValidated == false).ToListAsync();
     }
 
     public async Task<uint> DeleteShop(uint shopId)
     {
         var shop = await GetShopById(shopId);
+
+        if (shop is null)
+        {
+            throw new InvalidOperationException("Shop does not exist.");
+        }
 
         shop.IsDeleted = true;
 

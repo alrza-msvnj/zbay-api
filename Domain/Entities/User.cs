@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Domain.Entities;
 
 public class User
 {
@@ -17,5 +19,6 @@ public class User
     public bool IsDeleted { get; set; }
     public DateTime CreateDate { get; set; }
 
+    [JsonIgnore]
     public virtual Shop Shop { get; set; }
 }

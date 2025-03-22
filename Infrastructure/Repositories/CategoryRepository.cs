@@ -22,6 +22,16 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<ushort> CreateCategory(CategoryCreateDto categoryCreateDto)
     {
+        if (categoryCreateDto.ParentId is not null)
+        {
+            var parent = await GetCategoryById(categoryCreateDto.ParentId.Value);
+
+            if (parent is null)
+            {
+                throw new InvalidOperationException("Parent category does not exist.");
+            }
+        }
+
         var category = new Category
         {
             Title = categoryCreateDto.Title,

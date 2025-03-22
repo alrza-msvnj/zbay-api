@@ -18,6 +18,13 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
+            e.HasIndex(e => e.Username)
+            .IsUnique();
+            e.HasIndex(e => e.Email)
+            .IsUnique();
+            e.HasIndex(e => e.Password)
+            .IsUnique();
+
             e.HasOne(u => u.Shop)
             .WithOne(s => s.Owner)
             .HasForeignKey<User>(u => u.ShopId);
@@ -26,11 +33,21 @@ public class Context : DbContext
         modelBuilder.Entity<Shop>(e =>
         {
             e.HasKey(e => e.Id);
+
+            e.HasIndex(e => e.InstagramId)
+            .IsUnique();
+            e.HasIndex(e => e.InstagramUrl)
+            .IsUnique();
+            e.HasIndex(e => e.Name)
+            .IsUnique();
         });
 
         modelBuilder.Entity<Category>(e =>
         {
             e.HasKey(e => e.Id);
+
+            e.HasIndex(e => e.Title)
+            .IsUnique();
 
             e.HasOne(c => c.Parent)
             .WithMany(c => c.Children)

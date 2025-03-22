@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Domain.Entities;
 
 public class Category
 {
@@ -6,7 +8,10 @@ public class Category
     public required string Title { get; set; }
     public ushort? ParentId { get; set; }
 
+    [JsonIgnore]
     public virtual Category Parent { get; set; }
+    [JsonIgnore]
     public virtual ICollection<Category> Children { get; set; }
+    [JsonIgnore]
     public virtual ICollection<ShopCategory> ShopCategories { get; set; }
 }

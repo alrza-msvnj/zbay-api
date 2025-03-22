@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Domain.Entities;
 
 public class Shop
 {
@@ -16,6 +18,8 @@ public class Shop
     public DateTime JoinDate { get; set; }
     public List<ushort>? CategoryIds { get; set; }
 
+    [JsonIgnore]
     public virtual User Owner { get; set; }
+    [JsonIgnore]
     public virtual ICollection<ShopCategory> ShopCategories { get; set; }
 }

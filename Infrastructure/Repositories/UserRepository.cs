@@ -51,22 +51,27 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetUserByCredentials(string username, string password)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
+        return await _context.User.FirstOrDefaultAsync(u => u.IsDeleted == false && u.Username == username && u.Password == password);
     }
 
     public async Task<User> GetShopOwnerByShopId(uint shopId)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.ShopId == shopId);
+        return await _context.User.FirstOrDefaultAsync(u => u.IsDeleted == false && u.ShopId == shopId);
     }
 
     public async Task<List<User>> GetAllAdmins()
     {
-        return await _context.User.Where(u => u.IsAdmin == true).ToListAsync();
+        return await _context.User.Where(u => u.IsDeleted == false && u.IsAdmin == true).ToListAsync();
     }
 
     public async Task<uint> DeleteUser(uint userId)
     {
         var user = await GetUserById(userId);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User does not exist.");
+        }
 
         user.IsDeleted = true;
 
