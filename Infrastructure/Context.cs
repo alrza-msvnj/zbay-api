@@ -21,4 +21,48 @@ public class Context : DbContext
     {
         optionsBuilder.UseSqlServer(_configuration.GetConnectionString("Default"));
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>(e =>
+        {
+            e.HasKey(e => e.Id);
+
+            e.HasOne(u => u.Shop)
+            .WithOne(s => s.Owner)
+            .HasForeignKey<User>(u => u.ShopId);
+        });
+
+        modelBuilder.Entity<Shop>(e =>
+        {
+            e.HasKey(e => e.Id);
+
+            e.HasOne(s => s.Owner)
+            .WithOne(u => u.Shop)
+            .HasForeignKey<Shop>(s => s.OwnerId);
+        });
+
+        modelBuilder.Entity<Category>(e =>
+        {
+            e.HasKey(e => e.Id);
+
+            e.HasOne(c => c.Parent)
+            .WithMany(c => c.Children)
+            .HasForeignKey(c => c.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ShopCategory>(e =>
+        {
+            e.HasKey(e => new { e.ShopId, e.CategoryId });
+
+            e.HasOne(sc => sc.Shop)
+            .WithMany(s => s.ShopCategories)
+            .HasForeignKey(sc => sc.ShopId);
+
+            e.HasOne(sc => sc.Category)
+            .WithMany(c => c.ShopCategories)
+            .HasForeignKey(sc => sc.CategoryId);
+        });
+    }
 }

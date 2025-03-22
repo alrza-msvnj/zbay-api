@@ -15,4 +15,7 @@ public class Shop
     public bool IsDeleted { get; set; }
     public DateTime JoinDate { get; set; }
     public List<ushort>? CategoryIds { get; set; }
+
+    public virtual User Owner { get; set; }
+    public virtual ICollection<ShopCategory> ShopCategories { get; set; }
 }

@@ -16,4 +16,6 @@ public class User
     public bool IsAdmin { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreateDate { get; set; }
+
+    public virtual Shop Shop { get; set; }
 }
