@@ -10,7 +10,10 @@ public class Context : DbContext
 
     public DbSet<User> User { get; set; }
     public DbSet<Shop> Shop { get; set; }
+    public DbSet<Product> Product { get; set; }
     public DbSet<Category> Category { get; set; }
+    public DbSet<ShopCategory> ShopCategory { get; set; }
+    public DbSet<ProductCategory> ProductCategory { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,6 +45,18 @@ public class Context : DbContext
             .IsUnique();
         });
 
+        modelBuilder.Entity<Product>(e =>
+        {
+            e.HasKey(e => e.Id);
+
+            //e.Property(e => e.Images)
+            //.HasConversion()
+
+            e.HasOne(p => p.Shop)
+            .WithMany(s => s.Products)
+            .HasForeignKey(p => p.ShopId);
+        });
+
         modelBuilder.Entity<Category>(e =>
         {
             e.HasKey(e => e.Id);
@@ -65,6 +80,19 @@ public class Context : DbContext
 
             e.HasOne(sc => sc.Category)
             .WithMany(c => c.ShopCategories)
+            .HasForeignKey(sc => sc.CategoryId);
+        });
+
+        modelBuilder.Entity<ProductCategory>(e =>
+        {
+            e.HasKey(e => new { e.ProductId, e.CategoryId });
+
+            e.HasOne(pc => pc.Product)
+            .WithMany(p => p.ProductCategories)
+            .HasForeignKey(pc => pc.ProductId);
+
+            e.HasOne(pc => pc.Category)
+            .WithMany(c => c.ProductCategories)
             .HasForeignKey(sc => sc.CategoryId);
         });
     }

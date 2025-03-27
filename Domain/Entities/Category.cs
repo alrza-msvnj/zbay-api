@@ -14,4 +14,6 @@ public class Category
     public virtual ICollection<Category> Children { get; set; }
     [JsonIgnore]
     public virtual ICollection<ShopCategory> ShopCategories { get; set; }
+    [JsonIgnore]
+    public virtual ICollection<ProductCategory> ProductCategories { get; set; }
 }

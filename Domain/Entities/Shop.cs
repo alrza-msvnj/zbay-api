@@ -16,10 +16,11 @@ public class Shop
     public bool IsValidated { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime JoinDate { get; set; }
-    public List<ushort>? CategoryIds { get; set; }
 
     [JsonIgnore]
     public virtual User Owner { get; set; }
     [JsonIgnore]
     public virtual ICollection<ShopCategory> ShopCategories { get; set; }
+    [JsonIgnore]
+    public virtual ICollection<Product> Products { get; set; }
 }
