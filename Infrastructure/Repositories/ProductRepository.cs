@@ -56,17 +56,12 @@ public class ProductRepository : IProductRepository
         return await _context.Product.FirstOrDefaultAsync(p => p.Id == productId);
     }
 
-    public async Task<List<Product>> GetAllProductsByShopId(uint shopId)
-    {
-        return await _context.Product.Where(p => p.ShopId == shopId).ToListAsync();
-    }
-
-    public async Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber, ushort pageSize)
+    public async Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber = 1, ushort pageSize = 0)
     {
         return await _context.Product.Where(p => p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).ToListAsync();
     }
 
-    public async Task<List<Product>> GetAllProductsByCategories(List<ushort> categoryIds)
+    public async Task<List<Product>> GetAllProductsByCategoryIds(List<ushort> categoryIds)
     {
         return await _context.ProductCategory.Where(pc => categoryIds.Contains(pc.CategoryId)).Select(pc => pc.Product).ToListAsync();
     }

@@ -61,7 +61,7 @@ public class UserController : ControllerBase
         return Ok(admins);
     }
 
-    [HttpDelete(nameof(DeleteUser))]
+    [HttpDelete($"{nameof(DeleteUser)}/{{userId}}")]
     public async Task<IActionResult> DeleteUser(uint userId)
     {
         await _userRepository.DeleteUser(userId);

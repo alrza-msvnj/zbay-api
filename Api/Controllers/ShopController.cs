@@ -45,7 +45,7 @@ public class ShopController : ControllerBase
         return Ok(shop);
     }
 
-    [HttpGet($"{nameof(GetAllShopsByPaging)}/{{pageNumber}}/{{pageSize}}")]
+    [HttpGet(nameof(GetAllShopsByPaging))]
     public async Task<IActionResult> GetAllShopsByPaging(ushort pageNumber, ushort pageSize)
     {
         var shops = await _shopRepository.GetAllShopsByPaging(pageNumber, pageSize);
@@ -61,7 +61,7 @@ public class ShopController : ControllerBase
         return Ok(shops);
     }
 
-    [HttpDelete(nameof(DeleteShop))]
+    [HttpDelete($"{nameof(DeleteShop)}/{{shopId}}")]
     public async Task<IActionResult> DeleteShop(uint shopId)
     {
         await _shopRepository.DeleteShop(shopId);
