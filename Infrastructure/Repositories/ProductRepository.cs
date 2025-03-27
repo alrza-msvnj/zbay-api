@@ -38,6 +38,7 @@ public class ProductRepository : IProductRepository
         };
 
         await _context.Product.AddAsync(product);
+        await _context.SaveChangesAsync();
 
         var productCategories = productCreateDto.CategoryIds.Select(ci => new ProductCategory
         {
