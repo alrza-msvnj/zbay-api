@@ -7,7 +7,8 @@ public interface IUserRepository
 {
     Task<uint> CreateUser(UserCreateDto userCreateDto);
     Task<User> GetUserById(uint userId);
-    Task<User> GetUserByCredentials(string username, string password);
+    Task<User> GetUserByPhoneNumber(string phoneNumber);
+    Task<User> GetUserByCredentials(UserGetByCredentialsDto userGetByCredentialsDto);
     Task<User> GetShopOwnerByShopId(uint shopId);
     Task<List<User>> GetAllAdmins();
     Task<uint> DeleteUser(uint userId);

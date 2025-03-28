@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using static Infrastructure.Dtos.UserDto;
 
 namespace Infrastructure.Repositories;
@@ -22,15 +23,24 @@ public class UserRepository : IUserRepository
 
     public async Task<uint> CreateUser(UserCreateDto userCreateDto)
     {
+        if (string.IsNullOrWhiteSpace(userCreateDto.FirstName))
+        {
+            throw new FormatException("Please provide a first name.");
+        }
+
+        var existingUser = await GetUserByPhoneNumber(userCreateDto.PhoneNumber);
+
+        if (existingUser is not null)
+        {
+            throw new InvalidOperationException("User already exists.");
+        }
+
         var user = new User
         {
             Uuid = Guid.NewGuid(),
-            Username = userCreateDto.Username,
-            Email = userCreateDto.Email,
             PhoneNumber = userCreateDto.PhoneNumber,
             FirstName = userCreateDto.FirstName,
             LastName = userCreateDto.LastName,
-            BirthDate = userCreateDto.BirthDate,
             Password = userCreateDto.Password,
             IsShopOwner = false,
             IsAdmin = false,
@@ -49,9 +59,24 @@ public class UserRepository : IUserRepository
         return await _context.User.FindAsync(userId);
     }
 
-    public async Task<User> GetUserByCredentials(string username, string password)
+    public async Task<User> GetUserByPhoneNumber(string phoneNumber)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.IsDeleted == false && u.Username == username && u.Password == password);
+        if (Regex.IsMatch(phoneNumber, "^09\\d{9}$"))
+        {
+            throw new FormatException("Invalid phone number.");
+        }
+
+        return await _context.User.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+    }
+
+    public async Task<User> GetUserByCredentials(UserGetByCredentialsDto userGetByCredentialsDto)
+    {
+        if (Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
+        {
+            throw new FormatException("Invalid phone number.");
+        }
+
+        return await _context.User.FirstOrDefaultAsync(u => u.IsDeleted == false && u.PhoneNumber == userGetByCredentialsDto.PhoneNumber && u.Password == userGetByCredentialsDto.Password);
     }
 
     public async Task<User> GetShopOwnerByShopId(uint shopId)

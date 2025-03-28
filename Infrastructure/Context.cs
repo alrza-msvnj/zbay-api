@@ -21,11 +21,9 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
-            e.HasIndex(e => e.Username)
-            .IsUnique();
             e.HasIndex(e => e.Email)
             .IsUnique();
-            e.HasIndex(e => e.Password)
+            e.HasIndex(e => e.PhoneNumber)
             .IsUnique();
 
             e.HasOne(u => u.Shop)
