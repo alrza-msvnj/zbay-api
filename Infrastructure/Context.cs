@@ -49,9 +49,6 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
-            //e.Property(e => e.Images)
-            //.HasConversion()
-
             e.HasOne(p => p.Shop)
             .WithMany(s => s.Products)
             .HasForeignKey(p => p.ShopId);
