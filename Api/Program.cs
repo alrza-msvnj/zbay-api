@@ -19,9 +19,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "Zed Market Api",
+        Title = "Z Market Api",
         Version = "v1",
-        Description = "API documentation for Zed Market Api"
+        Description = "API documentation for Z Market Api"
     });
 });
 

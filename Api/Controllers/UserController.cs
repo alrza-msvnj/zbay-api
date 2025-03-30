@@ -1,5 +1,10 @@
 using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
 using static Infrastructure.Dtos.UserDto;
 
@@ -12,10 +17,12 @@ public class UserController : ControllerBase
     #region Initialization
 
     private readonly IUserRepository _userRepository;
+    private readonly IConfiguration _configuration;
 
-    public UserController(IUserRepository userRepository)
+    public UserController(IUserRepository userRepository, IConfiguration configuration)
     {
         _userRepository = userRepository;
+        _configuration = configuration;
     }
 
     #endregion
@@ -40,9 +47,14 @@ public class UserController : ControllerBase
     {
         var user = await _userRepository.GetUserByCredentials(userGetByCredentialsDto);
 
-        // login user
+        if (user is null)
+        {
+            return ValidationProblem();
+        }
 
-        return Ok();
+        var token = GenerateJwtToken(user.Id);
+
+        return Ok(new { Token = token });
     }
 
     [HttpGet($"{nameof(GetUserById)}/{{userId}}")]
@@ -75,6 +87,32 @@ public class UserController : ControllerBase
         await _userRepository.DeleteUser(userId);
 
         return Ok(userId);
+    }
+
+    #endregion
+
+    #region Utilities
+
+    private string GenerateJwtToken(uint userId)
+    {
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: jwtSettings["Issuer"],
+            audience: jwtSettings["Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpireMinutes"])),
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     #endregion
