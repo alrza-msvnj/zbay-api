@@ -1,5 +1,6 @@
 using Application.Interfaces;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -27,6 +28,9 @@ public class UserController : ControllerBase
 
     #endregion
 
+    // retrieving userId from token
+    //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
     #region Apis
 
     [HttpPost(nameof(Register))]
@@ -49,7 +53,7 @@ public class UserController : ControllerBase
 
         if (user is null)
         {
-            return ValidationProblem();
+            return BadRequest("Phone number or password is incorrect.");
         }
 
         var token = GenerateJwtToken(user.Id);
@@ -100,7 +104,7 @@ public class UserController : ControllerBase
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

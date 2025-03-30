@@ -71,7 +71,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetUserByCredentials(UserGetByCredentialsDto userGetByCredentialsDto)
     {
-        if (Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
         {
             throw new FormatException("Invalid phone number.");
         }

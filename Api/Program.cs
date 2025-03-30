@@ -5,6 +5,7 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 
@@ -23,6 +24,30 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Description = "API documentation for Z Market Api"
     });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter 'Bearer {your JWT token}'",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    options.AddSecurityDefinition("Bearer", securityScheme);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+    {
+        { securityScheme, new string[] {} }
+    };
+
+    options.AddSecurityRequirement(securityRequirement);
 });
 
 builder.Services.AddDbContext<Context>(options =>
@@ -60,7 +85,6 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
-//builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
