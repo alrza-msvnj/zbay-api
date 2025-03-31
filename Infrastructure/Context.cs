@@ -23,6 +23,7 @@ public class Context : DbContext
 
             e.HasIndex(e => e.Email)
             .IsUnique();
+
             e.HasIndex(e => e.PhoneNumber)
             .IsUnique();
 
@@ -37,10 +38,24 @@ public class Context : DbContext
 
             e.HasIndex(e => e.InstagramId)
             .IsUnique();
+
             e.HasIndex(e => e.InstagramUrl)
             .IsUnique();
+
             e.HasIndex(e => e.Name)
             .IsUnique();
+
+            e.HasOne(s => s.Owner)
+            .WithOne(u => u.Shop)
+            .HasForeignKey<Shop>(s => s.OwnerId);
+
+            e.HasMany(s => s.ShopCategories)
+            .WithOne(sc => sc.Shop)
+            .HasForeignKey(sc => sc.ShopId);
+
+            e.HasMany(s => s.Products)
+            .WithOne(p => p.Shop)
+            .HasForeignKey(p => p.ShopId);
         });
 
         modelBuilder.Entity<Product>(e =>
@@ -50,6 +65,10 @@ public class Context : DbContext
             e.HasOne(p => p.Shop)
             .WithMany(s => s.Products)
             .HasForeignKey(p => p.ShopId);
+
+            e.HasMany(p => p.ProductCategories)
+            .WithOne(pc => pc.Product)
+            .HasForeignKey(pc => pc.ProductId);
         });
 
         modelBuilder.Entity<Category>(e =>
@@ -63,6 +82,14 @@ public class Context : DbContext
             .WithMany(c => c.Children)
             .HasForeignKey(c => c.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasMany(c => c.ShopCategories)
+            .WithOne(sc => sc.Category)
+            .HasForeignKey(sc => sc.CategoryId);
+
+            e.HasMany(c => c.ProductCategories)
+            .WithOne(pc => pc.Category)
+            .HasForeignKey(pc => pc.CategoryId);
         });
 
         modelBuilder.Entity<ShopCategory>(e =>

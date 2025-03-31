@@ -61,7 +61,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetUserByPhoneNumber(string phoneNumber)
     {
-        if (Regex.IsMatch(phoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(phoneNumber, "^09\\d{9}$"))
         {
             throw new FormatException("Invalid phone number.");
         }
