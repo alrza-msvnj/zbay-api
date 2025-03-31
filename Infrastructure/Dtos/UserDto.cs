@@ -11,7 +11,14 @@ public class UserDto
         public required string ConfirmPassword { get; set; }
     }
 
-    public class UserGetByCredentialsDto
+    public class UserSetNewPasswordForUserDto
+    {
+        public required string PhoneNumber { get; set; }
+        public required string Password { get; set; }
+        public required string ConfirmPassword { get; set; }
+    }
+
+    public class UserCredentialsDto
     {
         public required string PhoneNumber { get; set; }
         public required string Password { get; set; }

@@ -54,6 +54,17 @@ public class UserRepository : IUserRepository
         return user.Id;
     }
 
+    public async Task<uint> SetNewPasswordForUser(UserCredentialsDto userCredentialsDto)
+    {
+        var user = await GetUserByPhoneNumber(userCredentialsDto.PhoneNumber);
+
+        user.Password = userCredentialsDto.Password;
+
+        await _context.SaveChangesAsync();
+
+        return user.Id;
+    }
+
     public async Task<User> GetUserById(uint userId)
     {
         return await _context.User.FindAsync(userId);
@@ -69,7 +80,7 @@ public class UserRepository : IUserRepository
         return await _context.User.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
     }
 
-    public async Task<User> GetUserByCredentials(UserGetByCredentialsDto userGetByCredentialsDto)
+    public async Task<User> GetUserByCredentials(UserCredentialsDto userGetByCredentialsDto)
     {
         if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
         {

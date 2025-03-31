@@ -1,6 +1,4 @@
 using Application.Interfaces;
-using Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -36,6 +34,11 @@ public class UserController : ControllerBase
     [HttpPost(nameof(Register))]
     public async Task<IActionResult> Register(UserCreateDto userCreateDto)
     {
+        if (!Regex.IsMatch(userCreateDto.PhoneNumber, "^09\\d{9}$"))
+        {
+            throw new FormatException("Invalid phone number.");
+        }
+
         if (userCreateDto.Password != userCreateDto.ConfirmPassword)
         {
             return BadRequest("Password and confirm password do not match.");
@@ -47,8 +50,13 @@ public class UserController : ControllerBase
     }
 
     [HttpPost(nameof(Login))]
-    public async Task<IActionResult> Login(UserGetByCredentialsDto userGetByCredentialsDto)
+    public async Task<IActionResult> Login(UserCredentialsDto userGetByCredentialsDto)
     {
+        if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
+        {
+            throw new FormatException("Invalid phone number.");
+        }
+
         var user = await _userRepository.GetUserByCredentials(userGetByCredentialsDto);
 
         if (user is null)
@@ -59,6 +67,30 @@ public class UserController : ControllerBase
         var token = GenerateJwtToken(user.Id);
 
         return Ok(new { Token = token });
+    }
+
+    [HttpPost(nameof(SetNewPasswordForUser))]
+    public async Task<IActionResult> SetNewPasswordForUser(UserSetNewPasswordForUserDto userSetNewPasswordDto)
+    {
+        if (!Regex.IsMatch(userSetNewPasswordDto.PhoneNumber, "^09\\d{9}$"))
+        {
+            throw new FormatException("Invalid phone number.");
+        }
+
+        if (userSetNewPasswordDto.Password != userSetNewPasswordDto.ConfirmPassword)
+        {
+            return BadRequest("Password and confirm password do not match.");
+        }
+
+        var userCredentialsDto = new UserCredentialsDto
+        {
+            PhoneNumber = userSetNewPasswordDto.PhoneNumber,
+            Password = userSetNewPasswordDto.Password
+        };
+
+        var userId = await _userRepository.SetNewPasswordForUser(userCredentialsDto);
+
+        return Ok(userId);
     }
 
     [HttpGet($"{nameof(GetUserById)}/{{userId}}")]
