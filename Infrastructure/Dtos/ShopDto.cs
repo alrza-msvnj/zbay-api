@@ -8,7 +8,7 @@ public class ShopDto
         public required string InstagramUrl { get; set; }
         public required string Name { get; set; }
         public uint Followers { get; set; }
-        public required string Logo { get; set; }
+        public byte[] Logo { get; set; }
         public uint OwnerId { get; set; }
         public bool IsVerified { get; set; }
     }
