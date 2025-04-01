@@ -17,7 +17,7 @@ public class Product
     public bool IsDeleted { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
-    public List<byte[]> Images { get; set; }
+    public List<string> Images { get; set; }
 
     [JsonIgnore]
     public virtual Shop Shop { get; set; }
