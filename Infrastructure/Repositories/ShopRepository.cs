@@ -54,22 +54,22 @@ public class ShopRepository : IShopRepository
 
     public async Task<Shop> GetShopById(uint shopId)
     {
-        return await _context.Shop.FindAsync(shopId);
+        return await _context.Shop.Where(s => s.Id == shopId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
 
-    public async Task<Shop> GetShopByUserId(uint userId)
+    public async Task<Shop> GetShopByOwnerId(uint ownerId)
     {
-        return await _context.Shop.FirstOrDefaultAsync(s => s.IsDeleted == false && s.OwnerId == userId);
+        return await _context.Shop.Where(s => s.IsDeleted == false && s.OwnerId == ownerId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
 
     public async Task<List<Shop>> GetAllShopsByPaging(ushort pageNumber, ushort pageSize)
     {
-        return await _context.Shop.Where(s => s.IsDeleted == false).Skip((pageNumber - 1) * pageSize).ToListAsync();
+        return await _context.Shop.Where(s => s.IsDeleted == false).Skip((pageNumber - 1) * pageSize).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
     public async Task<List<Shop>> GetAllUnvalidatedShops()
     {
-        return await _context.Shop.Where(s => s.IsDeleted == false && s.IsValidated == false).ToListAsync();
+        return await _context.Shop.Where(s => s.IsDeleted == false && s.IsValidated == false).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
     public async Task<uint> DeleteShop(uint shopId)

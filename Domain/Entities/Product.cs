@@ -9,11 +9,15 @@ public class Product
     public string Name { get; set; }
     public string? Description { get; set; }
     public decimal Price { get; set; }
+    public decimal OriginalPrice { get; set; }
     public byte DiscountPercentage { get; set; }
     public uint Stock { get; set; }
+    public byte Rating { get; set; }
+    public uint Reviews { get; set; }
     public uint ShopId { get; set; }
     public bool HasDiscount { get; set; }
     public bool IsAvailable { get; set; }
+    public bool IsNew { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
