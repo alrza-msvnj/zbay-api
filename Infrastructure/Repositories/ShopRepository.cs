@@ -37,6 +37,7 @@ public class ShopRepository : IShopRepository
             InstagramId = shopCreateDto.InstagramId,
             InstagramUrl = shopCreateDto.InstagramUrl,
             Name = shopCreateDto.Name,
+            Description = shopCreateDto.Description,
             Followers = shopCreateDto.Followers,
             Logo = shopCreateDto.Logo,
             OwnerId = shopCreateDto.OwnerId,
@@ -62,14 +63,14 @@ public class ShopRepository : IShopRepository
         return await _context.Shop.Where(s => s.IsDeleted == false && s.OwnerId == ownerId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
 
-    public async Task<List<Shop>> GetAllShopsByPaging(ushort pageNumber, ushort pageSize)
+    public async Task<List<Shop>> GetAllShops(ushort pageNumber, ushort pageSize)
     {
         return await _context.Shop.Where(s => s.IsDeleted == false).Skip((pageNumber - 1) * pageSize).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
     public async Task<List<Shop>> GetAllShopsByCategoryIds(List<ushort> categoryIds)
     {
-        return await _context.Shop.Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc }).Where(ssc => categoryIds.Contains(ssc.sc.CategoryId)).Select(ssc => ssc.s).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
+        return await _context.Shop.Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc }).Where(ssc => ssc.s.IsDeleted == false && categoryIds.Contains(ssc.sc.CategoryId)).Select(ssc => ssc.s).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
     public async Task<List<Shop>> GetAllUnvalidatedShops()

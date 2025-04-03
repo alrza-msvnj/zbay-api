@@ -27,12 +27,14 @@ public class ProductRepository : IProductRepository
             Uuid = Guid.NewGuid(),
             Name = productCreateDto.Name,
             Description = productCreateDto.Description,
-            Price = productCreateDto.Price,
+            Price = productCreateDto.OriginalPrice - productCreateDto.OriginalPrice * productCreateDto.DiscountPercentage / 100,
+            OriginalPrice = productCreateDto.OriginalPrice,
             DiscountPercentage = productCreateDto.DiscountPercentage,
             Stock = productCreateDto.Stock,
             ShopId = productCreateDto.ShopId,
             HasDiscount = productCreateDto.DiscountPercentage > 0,
             IsAvailable = productCreateDto.IsAvailable,
+            IsNew = true,
             CreateDate = DateTime.UtcNow,
             Images = productCreateDto.Images
         };
@@ -57,19 +59,24 @@ public class ProductRepository : IProductRepository
         return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).FirstOrDefaultAsync();
     }
 
-    public async Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber = 1, ushort pageSize = 0)
+    public async Task<List<Product>> GetAllProducts(ushort pageNumber, ushort pageSize)
     {
-        return await _context.Product.Where(p => p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        return await _context.Product.Where(p => p.IsDeleted == false).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+    }
+
+    public async Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber, ushort pageSize)
+    {
+        return await _context.Product.Where(p => p.IsDeleted == false && p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllProductsByCategoryIds(List<ushort> categoryIds)
     {
-        return await _context.Product.Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc }).Where(ppc => categoryIds.Contains(ppc.pc.CategoryId)).Select(ppc => ppc.p).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        return await _context.Product.Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc }).Where(ppc => ppc.p.IsDeleted == false && categoryIds.Contains(ppc.pc.CategoryId)).Select(ppc => ppc.p).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllAvailableProducts()
     {
-        return await _context.Product.Where(p => p.IsAvailable == true).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        return await _context.Product.Where(p => p.IsDeleted == false && p.IsAvailable == true).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<ulong> UpdateProduct(ProductUpdateDto productUpdateDto)

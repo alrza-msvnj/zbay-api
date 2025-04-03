@@ -87,10 +87,10 @@ public class ShopController : ControllerBase
         return Ok(shopDto);
     }
 
-    [HttpGet(nameof(GetAllShopsByPaging))]
-    public async Task<IActionResult> GetAllShopsByPaging(ushort pageNumber, ushort pageSize)
+    [HttpGet(nameof(GetAllShops))]
+    public async Task<IActionResult> GetAllShops(ushort pageNumber, ushort pageSize)
     {
-        var shops = await _shopRepository.GetAllShopsByPaging(pageNumber, pageSize);
+        var shops = await _shopRepository.GetAllShops(pageNumber, pageSize);
 
         var shopsDto = new List<ShopResponseDto>();
         shops.ForEach(s =>

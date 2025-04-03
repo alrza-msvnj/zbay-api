@@ -60,8 +60,45 @@ public class ProductController : ControllerBase
         return Ok(product);
     }
 
+    [HttpGet(nameof(GetAllProducts))]
+    public async Task<IActionResult> GetAllProducts(ushort pageNumber, ushort pageSize)
+    {
+        var products = await _productRepository.GetAllProducts(pageNumber, pageSize);
+
+        var productsDto = new List<ProductResponseDto>();
+        products.ForEach(p =>
+        {
+            var productDto = new ProductResponseDto
+            {
+                Id = p.Id,
+                Uuid = p.Uuid,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                OriginalPrice = p.OriginalPrice,
+                DiscountPercentage = p.DiscountPercentage,
+                Stock = p.Stock,
+                Rating = p.Rating,
+                Reviews = p.Reviews,
+                ShopId = p.ShopId,
+                HasDiscount = p.HasDiscount,
+                IsAvailable = p.IsAvailable,
+                IsNew = p.IsNew,
+                IsDeleted = p.IsDeleted,
+                CreateDate = p.CreateDate,
+                UpdateDate = p.UpdateDate,
+                Images = p.Images,
+                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
+            };
+
+            productsDto.Add(productDto);
+        });
+
+        return Ok(products);
+    }
+
     [HttpGet($"{nameof(GetAllProductsByShopId)}/{{shopId}}")]
-    public async Task<IActionResult> GetAllProductsByShopId(uint shopId, ushort pageNumber = 1, ushort pageSize = 0)
+    public async Task<IActionResult> GetAllProductsByShopId(uint shopId, ushort pageNumber, ushort pageSize)
     {
         var products = await _productRepository.GetAllProductsByShopId(shopId, pageNumber, pageSize);
 

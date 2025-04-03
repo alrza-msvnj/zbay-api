@@ -31,7 +31,7 @@ public class ProductDto
     {
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public decimal Price { get; set; }
+        public decimal OriginalPrice { get; set; }
         public byte DiscountPercentage { get; set; }
         public uint Stock { get; set; }
         public uint ShopId { get; set; }
