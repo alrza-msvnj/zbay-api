@@ -1,7 +1,9 @@
 ﻿using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.Dtos.ProductDto;
+using static Infrastructure.Dtos.SharedDto;
 
 namespace Infrastructure.Repositories;
 
@@ -59,24 +61,57 @@ public class ProductRepository : IProductRepository
         return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).Include(p => p.Shop).FirstOrDefaultAsync();
     }
 
-    public async Task<List<Product>> GetAllProducts(ushort pageNumber, ushort pageSize)
+    public async Task<List<Product>> GetAllProducts(GetAllDto getAllDto)
     {
-        return await _context.Product.Where(p => p.IsDeleted == false).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
+        {
+            var query = _context.Product.Where(p => !p.IsDeleted);
+
+            if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
+            {
+                query = query
+                    .Skip((getAllDto.PageNumber - 1) * getAllDto.PageSize)
+                    .Take(getAllDto.PageSize);
+            }
+
+            return await query.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        }
+
+        var productIdsQuery = _context.Product
+            .Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc })
+            .Where(ppc => !ppc.p.IsDeleted && getAllDto.CategoryIds.Contains(ppc.pc.CategoryId))
+            .GroupBy(ppc => ppc.p.Id)
+            .Select(g => g.Key);
+
+        if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
+        {
+            productIdsQuery = productIdsQuery
+                .Skip((getAllDto.PageNumber - 1) * getAllDto.PageSize)
+                .Take(getAllDto.PageSize);
+        }
+
+        var productIds = await productIdsQuery.ToListAsync();
+
+        return await _context.Product
+            .Where(p => productIds.Contains(p.Id))
+            .Include(p => p.ProductCategories)
+            .ThenInclude(pc => pc.Category)
+            .ToListAsync();
     }
 
     public async Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber, ushort pageSize)
     {
-        return await _context.Product.Where(p => p.IsDeleted == false && p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        return await _context.Product.Where(p => !p.IsDeleted && p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllProductsByCategoryIds(List<ushort> categoryIds)
     {
-        return await _context.Product.Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc }).Where(ppc => ppc.p.IsDeleted == false && categoryIds.Contains(ppc.pc.CategoryId)).Select(ppc => ppc.p).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        return await _context.Product.Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc }).Where(ppc => !ppc.p.IsDeleted && categoryIds.Contains(ppc.pc.CategoryId)).Select(ppc => ppc.p).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllAvailableProducts()
     {
-        return await _context.Product.Where(p => p.IsDeleted == false && p.IsAvailable == true).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+        return await _context.Product.Where(p => !p.IsDeleted && p.IsAvailable).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<ulong> UpdateProduct(ProductUpdateDto productUpdateDto)

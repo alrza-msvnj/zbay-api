@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     #endregion
 
     // retrieving userId from token
-    //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
     #region Apis
 
@@ -66,7 +66,7 @@ public class UserController : ControllerBase
 
         var token = GenerateJwtToken(user.Id);
 
-        return Ok(new { Token = token });
+        return Ok(token);
     }
 
     [HttpPost(nameof(SetNewPasswordForUser))]

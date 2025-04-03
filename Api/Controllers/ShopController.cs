@@ -1,5 +1,6 @@
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using static Infrastructure.Dtos.SharedDto;
 using static Infrastructure.Dtos.ShopDto;
 
 namespace Api.Controllers;
@@ -87,10 +88,10 @@ public class ShopController : ControllerBase
         return Ok(shopDto);
     }
 
-    [HttpGet(nameof(GetAllShops))]
-    public async Task<IActionResult> GetAllShops(ushort pageNumber, ushort pageSize)
+    [HttpPost(nameof(GetAllShops))]
+    public async Task<IActionResult> GetAllShops(GetAllDto shopGetAllDto)
     {
-        var shops = await _shopRepository.GetAllShops(pageNumber, pageSize);
+        var shops = await _shopRepository.GetAllShops(shopGetAllDto);
 
         var shopsDto = new List<ShopResponseDto>();
         shops.ForEach(s =>
@@ -120,41 +121,6 @@ public class ShopController : ControllerBase
         });
 
         return Ok(shopsDto);
-    }
-
-    [HttpPost(nameof(GetAllShopsByCategoryIds))]
-    public async Task<IActionResult> GetAllShopsByCategoryIds(List<ushort> categoryIds)
-    {
-        var shops = await _shopRepository.GetAllShopsByCategoryIds(categoryIds);
-
-        var shopsDto = new List<ShopResponseDto>();
-        shops.ForEach(s =>
-        {
-            var shopDto = new ShopResponseDto
-            {
-                Id = s.Id,
-                Uuid = s.Uuid,
-                InstagramId = s.InstagramId,
-                InstagramUrl = s.InstagramUrl,
-                Name = s.Name,
-                Description = s.Description,
-                Followers = s.Followers,
-                Logo = s.Logo,
-                Rating = s.Rating,
-                Reviews = s.Reviews,
-                TotalProducts = s.TotalProducts,
-                OwnerId = s.OwnerId,
-                IsVerified = s.IsVerified,
-                IsValidated = s.IsValidated,
-                IsDeleted = s.IsDeleted,
-                JoinDate = s.JoinDate,
-                Categories = s.ShopCategories.ToList().Select(sc => sc.Category).ToList(),
-            };
-
-            shopsDto.Add(shopDto);
-        });
-
-        return Ok(shops);
     }
 
     [HttpGet(nameof(GetAllUnvalidatedShops))]

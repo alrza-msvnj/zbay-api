@@ -87,17 +87,17 @@ public class UserRepository : IUserRepository
             throw new FormatException("Invalid phone number.");
         }
 
-        return await _context.User.FirstOrDefaultAsync(u => u.IsDeleted == false && u.PhoneNumber == userGetByCredentialsDto.PhoneNumber && u.Password == userGetByCredentialsDto.Password);
+        return await _context.User.FirstOrDefaultAsync(u => !u.IsDeleted && u.PhoneNumber == userGetByCredentialsDto.PhoneNumber && u.Password == userGetByCredentialsDto.Password);
     }
 
     public async Task<User> GetShopOwnerByShopId(uint shopId)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.IsDeleted == false && u.ShopId == shopId);
+        return await _context.User.FirstOrDefaultAsync(u => !u.IsDeleted && u.ShopId == shopId);
     }
 
     public async Task<List<User>> GetAllAdmins()
     {
-        return await _context.User.Where(u => u.IsDeleted == false && u.IsAdmin == true).ToListAsync();
+        return await _context.User.Where(u => !u.IsDeleted && u.IsAdmin).ToListAsync();
     }
 
     public async Task<uint> DeleteUser(uint userId)

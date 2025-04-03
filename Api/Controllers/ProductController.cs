@@ -1,6 +1,7 @@
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using static Infrastructure.Dtos.ProductDto;
+using static Infrastructure.Dtos.SharedDto;
 
 namespace Api.Controllers;
 
@@ -61,10 +62,10 @@ public class ProductController : ControllerBase
         return Ok(productDto);
     }
 
-    [HttpGet(nameof(GetAllProducts))]
-    public async Task<IActionResult> GetAllProducts(ushort pageNumber, ushort pageSize)
+    [HttpPost(nameof(GetAllProducts))]
+    public async Task<IActionResult> GetAllProducts(GetAllDto getAllDto)
     {
-        var products = await _productRepository.GetAllProducts(pageNumber, pageSize);
+        var products = await _productRepository.GetAllProducts(getAllDto);
 
         var productsDto = new List<ProductResponseDto>();
         products.ForEach(p =>

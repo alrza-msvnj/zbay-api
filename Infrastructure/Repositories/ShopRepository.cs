@@ -1,6 +1,8 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using static Infrastructure.Dtos.SharedDto;
 using static Infrastructure.Dtos.ShopDto;
 
 namespace Infrastructure.Repositories;
@@ -60,22 +62,50 @@ public class ShopRepository : IShopRepository
 
     public async Task<Shop> GetShopByOwnerId(uint ownerId)
     {
-        return await _context.Shop.Where(s => s.IsDeleted == false && s.OwnerId == ownerId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
+        return await _context.Shop.Where(s => !s.IsDeleted && s.OwnerId == ownerId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
 
-    public async Task<List<Shop>> GetAllShops(ushort pageNumber, ushort pageSize)
+    public async Task<List<Shop>> GetAllShops(GetAllDto getAllDto)
     {
-        return await _context.Shop.Where(s => s.IsDeleted == false).Skip((pageNumber - 1) * pageSize).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
-    }
+        if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
+        {
+            var query = _context.Shop.Where(s => !s.IsDeleted);
 
-    public async Task<List<Shop>> GetAllShopsByCategoryIds(List<ushort> categoryIds)
-    {
-        return await _context.Shop.Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc }).Where(ssc => ssc.s.IsDeleted == false && categoryIds.Contains(ssc.sc.CategoryId)).Select(ssc => ssc.s).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
+            if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
+            {
+                query = query
+                    .Skip((getAllDto.PageNumber - 1) * getAllDto.PageSize)
+                    .Take(getAllDto.PageSize);
+            }
+
+            return await query.Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
+        }
+
+        var shopIdsQuery = _context.Shop
+            .Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc })
+            .Where(ssc => !ssc.s.IsDeleted && getAllDto.CategoryIds.Contains(ssc.sc.CategoryId))
+            .GroupBy(ssc => ssc.s.Id)
+            .Select(g => g.Key);
+
+        if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
+        {
+            shopIdsQuery = shopIdsQuery
+                .Skip((getAllDto.PageNumber - 1) * getAllDto.PageSize)
+                .Take(getAllDto.PageSize);
+        }
+
+        var shopIds = await shopIdsQuery.ToListAsync();
+
+        return await _context.Shop
+            .Where(s => shopIds.Contains(s.Id))
+            .Include(s => s.ShopCategories)
+            .ThenInclude(sc => sc.Category)
+            .ToListAsync();
     }
 
     public async Task<List<Shop>> GetAllUnvalidatedShops()
     {
-        return await _context.Shop.Where(s => s.IsDeleted == false && s.IsValidated == false).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
+        return await _context.Shop.Where(s => !s.IsDeleted && !s.IsValidated).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
     public async Task<uint> DeleteShop(uint shopId)
