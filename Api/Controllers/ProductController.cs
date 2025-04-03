@@ -34,6 +34,29 @@ public class ProductController : ControllerBase
     {
         var product = await _productRepository.GetProductById(productId);
 
+        var productDto = new ProductResponseDto
+        {
+            Id = product.Id,
+            Uuid = product.Uuid,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            OriginalPrice = product.OriginalPrice,
+            DiscountPercentage = product.DiscountPercentage,
+            Stock = product.Stock,
+            Rating = product.Rating,
+            Reviews = product.Reviews,
+            ShopId = product.ShopId,
+            HasDiscount = product.HasDiscount,
+            IsAvailable = product.IsAvailable,
+            IsNew = product.IsNew,
+            IsDeleted = product.IsDeleted,
+            CreateDate = product.CreateDate,
+            UpdateDate = product.UpdateDate,
+            Images = product.Images,
+            Categories = product.ProductCategories.ToList().Select(pc => pc.Category).ToList()
+        };
+
         return Ok(product);
     }
 
@@ -41,6 +64,35 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetAllProductsByShopId(uint shopId, ushort pageNumber = 1, ushort pageSize = 0)
     {
         var products = await _productRepository.GetAllProductsByShopId(shopId, pageNumber, pageSize);
+
+        var productsDto = new List<ProductResponseDto>();
+        products.ForEach(p =>
+        {
+            var productDto = new ProductResponseDto
+            {
+                Id = p.Id,
+                Uuid = p.Uuid,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                OriginalPrice = p.OriginalPrice,
+                DiscountPercentage = p.DiscountPercentage,
+                Stock = p.Stock,
+                Rating = p.Rating,
+                Reviews = p.Reviews,
+                ShopId = p.ShopId,
+                HasDiscount = p.HasDiscount,
+                IsAvailable = p.IsAvailable,
+                IsNew = p.IsNew,
+                IsDeleted = p.IsDeleted,
+                CreateDate = p.CreateDate,
+                UpdateDate = p.UpdateDate,
+                Images = p.Images,
+                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
+            };
+
+            productsDto.Add(productDto);
+        });
 
         return Ok(products);
     }
@@ -50,6 +102,35 @@ public class ProductController : ControllerBase
     {
         var products = await _productRepository.GetAllProductsByCategoryIds(categoryIds);
 
+        var productsDto = new List<ProductResponseDto>();
+        products.ForEach(p =>
+        {
+            var productDto = new ProductResponseDto
+            {
+                Id = p.Id,
+                Uuid = p.Uuid,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                OriginalPrice = p.OriginalPrice,
+                DiscountPercentage = p.DiscountPercentage,
+                Stock = p.Stock,
+                Rating = p.Rating,
+                Reviews = p.Reviews,
+                ShopId = p.ShopId,
+                HasDiscount = p.HasDiscount,
+                IsAvailable = p.IsAvailable,
+                IsNew = p.IsNew,
+                IsDeleted = p.IsDeleted,
+                CreateDate = p.CreateDate,
+                UpdateDate = p.UpdateDate,
+                Images = p.Images,
+                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
+            };
+
+            productsDto.Add(productDto);
+        });
+
         return Ok(products);
     }
 
@@ -57,6 +138,35 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetAllAvailableProducts()
     {
         var products = await _productRepository.GetAllAvailableProducts();
+
+        var productsDto = new List<ProductResponseDto>();
+        products.ForEach(p =>
+        {
+            var productDto = new ProductResponseDto
+            {
+                Id = p.Id,
+                Uuid = p.Uuid,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                OriginalPrice = p.OriginalPrice,
+                DiscountPercentage = p.DiscountPercentage,
+                Stock = p.Stock,
+                Rating = p.Rating,
+                Reviews = p.Reviews,
+                ShopId = p.ShopId,
+                HasDiscount = p.HasDiscount,
+                IsAvailable = p.IsAvailable,
+                IsNew = p.IsNew,
+                IsDeleted = p.IsDeleted,
+                CreateDate = p.CreateDate,
+                UpdateDate = p.UpdateDate,
+                Images = p.Images,
+                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
+            };
+
+            productsDto.Add(productDto);
+        });
 
         return Ok(products);
     }

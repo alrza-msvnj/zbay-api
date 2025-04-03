@@ -6,7 +6,7 @@ public class Product
 {
     public ulong Id { get; set; }
     public Guid Uuid { get; set; }
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public string? Description { get; set; }
     public decimal Price { get; set; }
     public decimal OriginalPrice { get; set; }
@@ -21,7 +21,7 @@ public class Product
     public bool IsDeleted { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
-    public List<string> Images { get; set; }
+    public required List<string> Images { get; set; }
 
     [JsonIgnore]
     public virtual Shop Shop { get; set; }

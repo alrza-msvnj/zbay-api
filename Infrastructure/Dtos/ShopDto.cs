@@ -22,7 +22,7 @@ public class ShopDto
         public bool IsValidated { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime JoinDate { get; set; }
-        public List<Category> Categories { get; set; }
+        public required List<Category> Categories { get; set; }
     }
 
     public class ShopCreateDto

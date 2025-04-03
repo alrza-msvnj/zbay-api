@@ -122,6 +122,41 @@ public class ShopController : ControllerBase
         return Ok(shopsDto);
     }
 
+    [HttpPost(nameof(GetAllShopsByCategoryIds))]
+    public async Task<IActionResult> GetAllShopsByCategoryIds(List<ushort> categoryIds)
+    {
+        var shops = await _shopRepository.GetAllShopsByCategoryIds(categoryIds);
+
+        var shopsDto = new List<ShopResponseDto>();
+        shops.ForEach(s =>
+        {
+            var shopDto = new ShopResponseDto
+            {
+                Id = s.Id,
+                Uuid = s.Uuid,
+                InstagramId = s.InstagramId,
+                InstagramUrl = s.InstagramUrl,
+                Name = s.Name,
+                Description = s.Description,
+                Followers = s.Followers,
+                Logo = s.Logo,
+                Rating = s.Rating,
+                Reviews = s.Reviews,
+                TotalProducts = s.TotalProducts,
+                OwnerId = s.OwnerId,
+                IsVerified = s.IsVerified,
+                IsValidated = s.IsValidated,
+                IsDeleted = s.IsDeleted,
+                JoinDate = s.JoinDate,
+                Categories = s.ShopCategories.ToList().Select(sc => sc.Category).ToList(),
+            };
+
+            shopsDto.Add(shopDto);
+        });
+
+        return Ok(shops);
+    }
+
     [HttpGet(nameof(GetAllUnvalidatedShops))]
     public async Task<IActionResult> GetAllUnvalidatedShops()
     {

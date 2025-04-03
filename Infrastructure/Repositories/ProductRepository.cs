@@ -54,22 +54,22 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetProductById(ulong productId)
     {
-        return await _context.Product.FirstOrDefaultAsync(p => p.Id == productId);
+        return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).FirstOrDefaultAsync();
     }
 
     public async Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber = 1, ushort pageSize = 0)
     {
-        return await _context.Product.Where(p => p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).ToListAsync();
+        return await _context.Product.Where(p => p.ShopId == shopId).Skip((pageNumber - 1) * pageSize).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllProductsByCategoryIds(List<ushort> categoryIds)
     {
-        return await _context.ProductCategory.Where(pc => categoryIds.Contains(pc.CategoryId)).Select(pc => pc.Product).ToListAsync();
+        return await _context.Product.Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc }).Where(ppc => categoryIds.Contains(ppc.pc.CategoryId)).Select(ppc => ppc.p).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllAvailableProducts()
     {
-        return await _context.Product.Where(p => p.IsAvailable == true).ToListAsync();
+        return await _context.Product.Where(p => p.IsAvailable == true).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<ulong> UpdateProduct(ProductUpdateDto productUpdateDto)

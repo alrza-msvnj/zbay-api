@@ -67,6 +67,11 @@ public class ShopRepository : IShopRepository
         return await _context.Shop.Where(s => s.IsDeleted == false).Skip((pageNumber - 1) * pageSize).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
+    public async Task<List<Shop>> GetAllShopsByCategoryIds(List<ushort> categoryIds)
+    {
+        return await _context.Shop.Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc }).Where(ssc => categoryIds.Contains(ssc.sc.CategoryId)).Select(ssc => ssc.s).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
+    }
+
     public async Task<List<Shop>> GetAllUnvalidatedShops()
     {
         return await _context.Shop.Where(s => s.IsDeleted == false && s.IsValidated == false).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
