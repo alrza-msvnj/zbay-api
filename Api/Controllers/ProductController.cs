@@ -54,10 +54,11 @@ public class ProductController : ControllerBase
             CreateDate = product.CreateDate,
             UpdateDate = product.UpdateDate,
             Images = product.Images,
-            Categories = product.ProductCategories.ToList().Select(pc => pc.Category).ToList()
+            Categories = product.ProductCategories.ToList().Select(pc => pc.Category).ToList(),
+            Shop = product.Shop
         };
 
-        return Ok(product);
+        return Ok(productDto);
     }
 
     [HttpGet(nameof(GetAllProducts))]
@@ -94,7 +95,7 @@ public class ProductController : ControllerBase
             productsDto.Add(productDto);
         });
 
-        return Ok(products);
+        return Ok(productsDto);
     }
 
     [HttpGet($"{nameof(GetAllProductsByShopId)}/{{shopId}}")]
@@ -131,7 +132,7 @@ public class ProductController : ControllerBase
             productsDto.Add(productDto);
         });
 
-        return Ok(products);
+        return Ok(productsDto);
     }
 
     [HttpPost(nameof(GetAllProductsByCategoryIds))]
@@ -168,7 +169,7 @@ public class ProductController : ControllerBase
             productsDto.Add(productDto);
         });
 
-        return Ok(products);
+        return Ok(productsDto);
     }
 
     [HttpGet(nameof(GetAllAvailableProducts))]
@@ -205,7 +206,7 @@ public class ProductController : ControllerBase
             productsDto.Add(productDto);
         });
 
-        return Ok(products);
+        return Ok(productsDto);
     }
 
     [HttpPut(nameof(UpdateProduct))]

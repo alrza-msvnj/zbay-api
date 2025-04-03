@@ -24,7 +24,8 @@ public class ProductDto
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public required List<string> Images { get; set; }
-        public required List<Category> Categories { get; set; }
+        public List<Category>? Categories { get; set; }
+        public Shop? Shop { get; set; }
     }
 
     public class ProductCreateDto

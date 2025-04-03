@@ -56,7 +56,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetProductById(ulong productId)
     {
-        return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).FirstOrDefaultAsync();
+        return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).Include(p => p.Shop).FirstOrDefaultAsync();
     }
 
     public async Task<List<Product>> GetAllProducts(ushort pageNumber, ushort pageSize)
