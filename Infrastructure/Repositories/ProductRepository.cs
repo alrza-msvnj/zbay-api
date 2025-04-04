@@ -65,7 +65,7 @@ public class ProductRepository : IProductRepository
     {
         if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
         {
-            var query = _context.Product.Where(p => !p.IsDeleted);
+            var query = _context.Product.Where(p => !p.IsDeleted && p.Name.Contains(getAllDto.SearchTerm));
 
             if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
             {
@@ -79,7 +79,7 @@ public class ProductRepository : IProductRepository
 
         var productIdsQuery = _context.Product
             .Join(_context.ProductCategory, p => p.Id, pc => pc.ProductId, (p, pc) => new { p, pc })
-            .Where(ppc => !ppc.p.IsDeleted && getAllDto.CategoryIds.Contains(ppc.pc.CategoryId))
+            .Where(ppc => !ppc.p.IsDeleted && getAllDto.CategoryIds.Contains(ppc.pc.CategoryId) && ppc.p.Name.Contains(getAllDto.SearchTerm))
             .GroupBy(ppc => ppc.p.Id)
             .Select(g => g.Key);
 

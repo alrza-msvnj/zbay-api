@@ -69,7 +69,7 @@ public class ShopRepository : IShopRepository
     {
         if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
         {
-            var query = _context.Shop.Where(s => !s.IsDeleted && s.IsValidated);
+            var query = _context.Shop.Where(s => !s.IsDeleted && s.IsValidated && s.Name.Contains(getAllDto.SearchTerm));
 
             if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
             {
@@ -83,7 +83,7 @@ public class ShopRepository : IShopRepository
 
         var shopIdsQuery = _context.Shop
             .Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc })
-            .Where(ssc => !ssc.s.IsDeleted && ssc.s.IsValidated && getAllDto.CategoryIds.Contains(ssc.sc.CategoryId))
+            .Where(ssc => !ssc.s.IsDeleted && ssc.s.IsValidated && getAllDto.CategoryIds.Contains(ssc.sc.CategoryId) && ssc.s.Name.Contains(getAllDto.SearchTerm))
             .GroupBy(ssc => ssc.s.Id)
             .Select(g => g.Key);
 
