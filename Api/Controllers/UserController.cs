@@ -1,6 +1,9 @@
 using Application.Interfaces;
+using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -64,7 +67,7 @@ public class UserController : ControllerBase
             return BadRequest("Phone number or password is incorrect.");
         }
 
-        var token = GenerateJwtToken(user.Id);
+        var token = GenerateJwtToken(user);
 
         return Ok(token);
     }
@@ -129,14 +132,15 @@ public class UserController : ControllerBase
 
     #region Utilities
 
-    private string GenerateJwtToken(uint userId)
+    private string GenerateJwtToken(User user)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

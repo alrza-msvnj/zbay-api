@@ -69,7 +69,7 @@ public class ShopRepository : IShopRepository
     {
         if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
         {
-            var query = _context.Shop.Where(s => !s.IsDeleted);
+            var query = _context.Shop.Where(s => !s.IsDeleted && s.IsValidated);
 
             if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
             {
@@ -83,7 +83,7 @@ public class ShopRepository : IShopRepository
 
         var shopIdsQuery = _context.Shop
             .Join(_context.ShopCategory, s => s.Id, sc => sc.ShopId, (s, sc) => new { s, sc })
-            .Where(ssc => !ssc.s.IsDeleted && getAllDto.CategoryIds.Contains(ssc.sc.CategoryId))
+            .Where(ssc => !ssc.s.IsDeleted && ssc.s.IsValidated && getAllDto.CategoryIds.Contains(ssc.sc.CategoryId))
             .GroupBy(ssc => ssc.s.Id)
             .Select(g => g.Key);
 
@@ -118,6 +118,22 @@ public class ShopRepository : IShopRepository
         }
 
         shop.IsDeleted = true;
+
+        await _context.SaveChangesAsync();
+
+        return shop.Id;
+    }
+
+    public async Task<uint> ApproveOrRejectShop(uint shopId, bool isApproved)
+    {
+        var shop = await GetShopById(shopId);
+
+        if (shop is null)
+        {
+            throw new InvalidOperationException("Shop does not exist.");
+        }
+
+        shop.IsValidated = isApproved;
 
         await _context.SaveChangesAsync();
 

@@ -12,4 +12,5 @@ public interface IShopRepository
     Task<List<Shop>> GetAllShops(GetAllDto shopGetAllDto);
     Task<List<Shop>> GetAllUnvalidatedShops();
     Task<uint> DeleteShop(uint shopId);
+    Task<uint> ApproveOrRejectShop(uint shopId, bool isApproved);
 }

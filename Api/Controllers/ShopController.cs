@@ -166,5 +166,13 @@ public class ShopController : ControllerBase
         return Ok(shopId);
     }
 
+    [HttpGet($"{nameof(ApproveOrRejectShop)}/{{shopId}}/{{isApproved}}")]
+    public async Task<IActionResult> ApproveOrRejectShop(uint shopId, bool isApproved)
+    {
+        await _shopRepository.ApproveOrRejectShop(shopId, isApproved);
+
+        return Ok(shopId);
+    }
+
     #endregion
 }

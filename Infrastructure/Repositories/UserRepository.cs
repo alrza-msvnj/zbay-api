@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using static Infrastructure.Dtos.UserDto;
@@ -42,8 +43,7 @@ public class UserRepository : IUserRepository
             FirstName = userCreateDto.FirstName,
             LastName = userCreateDto.LastName,
             Password = userCreateDto.Password,
-            IsShopOwner = false,
-            IsAdmin = false,
+            Role = UserRole.Buyer,
             IsDeleted = false,
             CreateDate = DateTime.UtcNow
         };
@@ -97,7 +97,7 @@ public class UserRepository : IUserRepository
 
     public async Task<List<User>> GetAllAdmins()
     {
-        return await _context.User.Where(u => !u.IsDeleted && u.IsAdmin).ToListAsync();
+        return await _context.User.Where(u => !u.IsDeleted && u.Role == UserRole.Admin).ToListAsync();
     }
 
     public async Task<uint> DeleteUser(uint userId)

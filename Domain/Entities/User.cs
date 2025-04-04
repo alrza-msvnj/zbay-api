@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace Domain.Entities;
 
@@ -13,8 +14,7 @@ public class User
     public DateOnly? BirthDate { get; set; }
     public required string Password { get; set; }
     public uint? ShopId { get; set; }
-    public bool IsShopOwner { get; set; }
-    public bool IsAdmin { get; set; }
+    public UserRole Role { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreateDate { get; set; }
 
