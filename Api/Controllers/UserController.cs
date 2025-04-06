@@ -32,8 +32,8 @@ public class UserController : ControllerBase
 
     #region Apis
 
-    [HttpPost(nameof(CreateTemporaryUser))]
-    public async Task<IActionResult> CreateTemporaryUser(string phoneNumber)
+    [HttpPost(nameof(CreateTemporaryUserAndSendRegistrationOtp))]
+    public async Task<IActionResult> CreateTemporaryUserAndSendRegistrationOtp([FromBody] string phoneNumber)
     {
         if (!Regex.IsMatch(phoneNumber, "^9\\d{9}$"))
         {
@@ -42,12 +42,6 @@ public class UserController : ControllerBase
 
         var userId = await _userRepository.CreateTemporaryUser(phoneNumber);
 
-        return Ok(userId);
-    }
-
-    [HttpPost(nameof(SendRegistrationOtp))]
-    public async Task<IActionResult> SendRegistrationOtp(uint userId)
-    {
         var otp = await _userRepository.SetLastOtp(userId);
 
         return Ok(otp);
@@ -61,9 +55,11 @@ public class UserController : ControllerBase
             return BadRequest("Password and confirm password do not match.");
         }
 
-        var userId = await _userRepository.RegisterUser(userCreateDto);
+        var user = await _userRepository.RegisterUser(userCreateDto);
 
-        return Ok(userId);
+        var token = GenerateJwtToken(user);
+
+        return Ok(token);
     }
 
     [HttpPost(nameof(Login))]

@@ -52,9 +52,9 @@ public class UserRepository : IUserRepository
         return user.Id;
     }
 
-    public async Task<uint> RegisterUser(UserRegisterDto userRegisterDto)
+    public async Task<User> RegisterUser(UserRegisterDto userRegisterDto)
     {
-        var user = await GetUserById(userRegisterDto.UserId);
+        var user = await GetUserByPhoneNumber(userRegisterDto.PhoneNumber);
 
         if (user is null)
         {
@@ -64,10 +64,11 @@ public class UserRepository : IUserRepository
         user.FirstName = userRegisterDto.FirstName;
         user.LastName = userRegisterDto.LastName;
         user.Password = userRegisterDto.Password;
+        user.Role = UserRole.Buyer;
 
         await _context.SaveChangesAsync();
 
-        return user.Id;
+        return user;
     }
 
     public async Task<uint> SetNewPasswordForUser(UserCredentialsDto userCredentialsDto)
