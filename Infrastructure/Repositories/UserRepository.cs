@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Text.RegularExpressions;
 using static Infrastructure.Dtos.UserDto;
 
@@ -22,14 +23,14 @@ public class UserRepository : IUserRepository
 
     #region Methods
 
-    public async Task<uint> CreateUser(UserCreateDto userCreateDto)
+    public async Task<uint> CreateTemporaryUser(string phoneNumber)
     {
-        if (string.IsNullOrWhiteSpace(userCreateDto.FirstName))
+        if (!Regex.IsMatch(phoneNumber, "^9\\d{9}$"))
         {
-            throw new FormatException("Please provide a first name.");
+            throw new FormatException("Invalid phone number.");
         }
 
-        var existingUser = await GetUserByPhoneNumber(userCreateDto.PhoneNumber);
+        var existingUser = await GetUserByPhoneNumber(phoneNumber);
 
         if (existingUser is not null)
         {
@@ -39,16 +40,31 @@ public class UserRepository : IUserRepository
         var user = new User
         {
             Uuid = Guid.NewGuid(),
-            PhoneNumber = userCreateDto.PhoneNumber,
-            FirstName = userCreateDto.FirstName,
-            LastName = userCreateDto.LastName,
-            Password = userCreateDto.Password,
-            Role = UserRole.Buyer,
+            PhoneNumber = phoneNumber,
+            Role = UserRole.Temporary,
             IsDeleted = false,
             CreateDate = DateTime.UtcNow
         };
 
         await _context.User.AddAsync(user);
+        await _context.SaveChangesAsync();
+
+        return user.Id;
+    }
+
+    public async Task<uint> RegisterUser(UserRegisterDto userRegisterDto)
+    {
+        var user = await GetUserById(userRegisterDto.UserId);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User does not exist.");
+        }
+
+        user.FirstName = userRegisterDto.FirstName;
+        user.LastName = userRegisterDto.LastName;
+        user.Password = userRegisterDto.Password;
+
         await _context.SaveChangesAsync();
 
         return user.Id;
@@ -72,7 +88,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetUserByPhoneNumber(string phoneNumber)
     {
-        if (!Regex.IsMatch(phoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(phoneNumber, "^9\\d{9}$"))
         {
             throw new FormatException("Invalid phone number.");
         }
@@ -82,7 +98,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetUserByCredentials(UserCredentialsDto userGetByCredentialsDto)
     {
-        if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^9\\d{9}$"))
         {
             throw new FormatException("Invalid phone number.");
         }
@@ -114,6 +130,25 @@ public class UserRepository : IUserRepository
         _context.SaveChanges();
             
         return user.Id;
+    }
+
+    public async Task<ushort> SetLastOtp(uint userId)
+    {
+        var user = await GetUserById(userId);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User does not exist");
+        }
+
+        var random = new Random();
+        var code = Convert.ToUInt16(random.Next(1000, 9999));
+
+        user.LastOtp = code;
+
+        await _context.SaveChangesAsync();
+
+        return code;
     }
 
     #endregion

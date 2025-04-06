@@ -5,7 +5,9 @@ namespace Application.Interfaces;
 
 public interface IUserRepository
 {
-    Task<uint> CreateUser(UserCreateDto userCreateDto);
+    Task<uint> CreateTemporaryUser(string phoneNumber);
+    Task<ushort> SetLastOtp(uint userId);
+    Task<uint> RegisterUser(UserRegisterDto userRegisterDto);
     Task<uint> SetNewPasswordForUser(UserCredentialsDto userCredentialsDto);
     Task<User> GetUserById(uint userId);
     Task<User> GetUserByPhoneNumber(string phoneNumber);

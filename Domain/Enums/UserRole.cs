@@ -5,5 +5,6 @@ public enum UserRole
     Guest,
     Buyer,
     ShopOwner,
-    Admin
+    Admin,
+    Temporary
 }

@@ -1,9 +1,7 @@
 using Application.Interfaces;
 using Domain.Entities;
-using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -34,20 +32,36 @@ public class UserController : ControllerBase
 
     #region Apis
 
-    [HttpPost(nameof(Register))]
-    public async Task<IActionResult> Register(UserCreateDto userCreateDto)
+    [HttpPost(nameof(CreateTemporaryUser))]
+    public async Task<IActionResult> CreateTemporaryUser(string phoneNumber)
     {
-        if (!Regex.IsMatch(userCreateDto.PhoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(phoneNumber, "^9\\d{9}$"))
         {
-            throw new FormatException("Invalid phone number.");
+            return BadRequest("Invalid phone number.");
         }
 
+        var userId = await _userRepository.CreateTemporaryUser(phoneNumber);
+
+        return Ok(userId);
+    }
+
+    [HttpPost(nameof(SendRegistrationOtp))]
+    public async Task<IActionResult> SendRegistrationOtp(uint userId)
+    {
+        var otp = await _userRepository.SetLastOtp(userId);
+
+        return Ok(otp);
+    }
+
+    [HttpPost(nameof(Register))]
+    public async Task<IActionResult> Register(UserRegisterDto userCreateDto)
+    {
         if (userCreateDto.Password != userCreateDto.ConfirmPassword)
         {
             return BadRequest("Password and confirm password do not match.");
         }
 
-        var userId = await _userRepository.CreateUser(userCreateDto);
+        var userId = await _userRepository.RegisterUser(userCreateDto);
 
         return Ok(userId);
     }
@@ -55,9 +69,9 @@ public class UserController : ControllerBase
     [HttpPost(nameof(Login))]
     public async Task<IActionResult> Login(UserCredentialsDto userGetByCredentialsDto)
     {
-        if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(userGetByCredentialsDto.PhoneNumber, "^9\\d{9}$"))
         {
-            throw new FormatException("Invalid phone number.");
+            return BadRequest("Invalid phone number.");
         }
 
         var user = await _userRepository.GetUserByCredentials(userGetByCredentialsDto);
@@ -75,9 +89,9 @@ public class UserController : ControllerBase
     [HttpPost(nameof(SetNewPasswordForUser))]
     public async Task<IActionResult> SetNewPasswordForUser(UserSetNewPasswordForUserDto userSetNewPasswordDto)
     {
-        if (!Regex.IsMatch(userSetNewPasswordDto.PhoneNumber, "^09\\d{9}$"))
+        if (!Regex.IsMatch(userSetNewPasswordDto.PhoneNumber, "^9\\d{9}$"))
         {
-            throw new FormatException("Invalid phone number.");
+            return BadRequest("Invalid phone number.");
         }
 
         if (userSetNewPasswordDto.Password != userSetNewPasswordDto.ConfirmPassword)
