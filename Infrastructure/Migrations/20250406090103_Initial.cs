@@ -32,6 +32,30 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastOtp = table.Column<int>(type: "int", nullable: false),
+                    ShopId = table.Column<long>(type: "bigint", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Shop",
                 columns: table => new
                 {
@@ -41,8 +65,10 @@ namespace Infrastructure.Migrations
                     InstagramId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     InstagramUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Followers = table.Column<long>(type: "bigint", nullable: false),
-                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalProducts = table.Column<int>(type: "int", nullable: false),
                     OwnerId = table.Column<long>(type: "bigint", nullable: false),
                     IsVerified = table.Column<bool>(type: "bit", nullable: false),
                     IsValidated = table.Column<bool>(type: "bit", nullable: false),
@@ -52,6 +78,12 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Shop", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Shop_User_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,11 +96,13 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DiscountPercentage = table.Column<byte>(type: "tinyint", nullable: false),
                     Stock = table.Column<long>(type: "bigint", nullable: false),
                     ShopId = table.Column<long>(type: "bigint", nullable: false),
                     HasDiscount = table.Column<bool>(type: "bit", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    IsNew = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -107,35 +141,6 @@ namespace Infrastructure.Migrations
                         principalTable: "Shop",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShopId = table.Column<long>(type: "bigint", nullable: true),
-                    IsShopOwner = table.Column<bool>(type: "bit", nullable: false),
-                    IsAdmin = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_User_Shop_ShopId",
-                        column: x => x.ShopId,
-                        principalTable: "Shop",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -202,6 +207,12 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Shop_OwnerId",
+                table: "Shop",
+                column: "OwnerId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ShopCategory_CategoryId",
                 table: "ShopCategory",
                 column: "CategoryId");
@@ -219,13 +230,6 @@ namespace Infrastructure.Migrations
                 column: "PhoneNumber",
                 unique: true,
                 filter: "[PhoneNumber] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_ShopId",
-                table: "User",
-                column: "ShopId",
-                unique: true,
-                filter: "[ShopId] IS NOT NULL");
         }
 
         /// <inheritdoc />
@@ -238,9 +242,6 @@ namespace Infrastructure.Migrations
                 name: "ShopCategory");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "Product");
 
             migrationBuilder.DropTable(
@@ -248,6 +249,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Shop");
+
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }

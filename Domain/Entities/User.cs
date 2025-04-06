@@ -13,6 +13,7 @@ public class User
     public string? LastName { get; set; }
     public DateOnly? BirthDate { get; set; }
     public required string Password { get; set; }
+    public ushort LastOtp { get; set; }
     public uint? ShopId { get; set; }
     public UserRole Role { get; set; }
     public bool IsDeleted { get; set; }

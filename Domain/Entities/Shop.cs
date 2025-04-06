@@ -12,8 +12,6 @@ public class Shop
     public string? Description { get; set; }
     public uint Followers { get; set; }
     public required string Logo { get; set; }
-    public byte Rating { get; set; }
-    public uint Reviews { get; set; }
     public ushort TotalProducts { get; set; }
     public uint OwnerId { get; set; }
     public bool IsVerified { get; set; }

@@ -14,8 +14,6 @@ public class ProductDto
         public decimal OriginalPrice { get; set; }
         public byte DiscountPercentage { get; set; }
         public uint Stock { get; set; }
-        public byte Rating { get; set; }
-        public uint Reviews { get; set; }
         public uint ShopId { get; set; }
         public bool HasDiscount { get; set; }
         public bool IsAvailable { get; set; }

@@ -90,12 +90,6 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<byte>("Rating")
-                        .HasColumnType("tinyint");
-
-                    b.Property<long>("Reviews")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("ShopId")
                         .HasColumnType("bigint");
 
@@ -175,12 +169,6 @@ namespace Infrastructure.Migrations
                     b.Property<long>("OwnerId")
                         .HasColumnType("bigint");
 
-                    b.Property<byte>("Rating")
-                        .HasColumnType("tinyint");
-
-                    b.Property<long>("Reviews")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("TotalProducts")
                         .HasColumnType("int");
 
@@ -244,6 +232,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LastOtp")
+                        .HasColumnType("int");
 
                     b.Property<string>("Password")
                         .IsRequired()
