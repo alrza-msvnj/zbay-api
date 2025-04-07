@@ -43,8 +43,8 @@ namespace Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BirthDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastOtp = table.Column<int>(type: "int", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastOtp = table.Column<int>(type: "int", nullable: true),
                     ShopId = table.Column<long>(type: "bigint", nullable: true),
                     Role = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -62,6 +62,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IgId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InstagramId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     InstagramUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),

@@ -138,6 +138,9 @@ namespace Infrastructure.Migrations
                     b.Property<long>("Followers")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("IgId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("InstagramId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");

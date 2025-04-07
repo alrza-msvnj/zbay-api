@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250406091755_MakeLastOtpColumnNullable")]
-    partial class MakeLastOtpColumnNullable
+    [Migration("20250406212459_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,9 @@ namespace Infrastructure.Migrations
                     b.Property<long>("Followers")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("IgId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("InstagramId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -240,7 +243,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")

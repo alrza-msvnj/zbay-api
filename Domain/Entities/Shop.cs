@@ -6,6 +6,7 @@ public class Shop
 {
     public uint Id { get; set; }
     public Guid Uuid { get; set; }
+    public string? IgId { get; set; }
     public required string InstagramId { get; set; }
     public required string InstagramUrl { get; set; }
     public required string Name { get; set; }

@@ -25,12 +25,13 @@ public class ShopDto
 
     public class ShopCreateDto
     {
+        public string? IgId { get; set; }
         public required string InstagramId { get; set; }
         public required string InstagramUrl { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
         public uint Followers { get; set; }
-        public string Logo { get; set; }
+        public required string Logo { get; set; }
         public uint OwnerId { get; set; }
         public bool IsVerified { get; set; }
     }

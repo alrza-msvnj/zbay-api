@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.Dtos.SharedDto;
@@ -36,6 +37,7 @@ public class ShopRepository : IShopRepository
         var shop = new Shop
         {
             Uuid = Guid.NewGuid(),
+            IgId = shopCreateDto.IgId,
             InstagramId = shopCreateDto.InstagramId,
             InstagramUrl = shopCreateDto.InstagramUrl,
             Name = shopCreateDto.Name,
@@ -50,6 +52,13 @@ public class ShopRepository : IShopRepository
         };
 
         await _context.AddAsync(shop);
+        await _context.SaveChangesAsync();
+
+        var user = await _userRepository.GetUserById(shopCreateDto.OwnerId);
+
+        user.ShopId = shop.Id;
+        user.Role = UserRole.ShopOwner;
+
         await _context.SaveChangesAsync();
 
         return shop.Id;
