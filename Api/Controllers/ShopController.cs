@@ -1,8 +1,6 @@
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Security.Claims;
 using static Infrastructure.Dtos.SharedDto;
 using static Infrastructure.Dtos.ShopDto;
 
@@ -15,13 +13,10 @@ public class ShopController : ControllerBase
     #region Initialization
 
     private readonly IShopRepository _shopRepository;
-    private readonly HttpClient _httpClient;
-    private const string AccessToken = "IGAAOtkoELzZCpBZAE9WUm5NbGdKT2ZAzMzJiemhMVzlYSktZATXM1V1kyOG1hV2phcGNfUnZAWMDhZAWVhYWVJ2djJVdkVMWkNuY282STYwbWF6ZAm9PTUJGdWRKVWdqeHRwVmtJUGRqbGJzM3lIN2xpVTFsaHNrTkpaUnEtWnlPQmdnOAZDZD";
 
-    public ShopController(IShopRepository shopRepository, HttpClient httpClient)
+    public ShopController(IShopRepository shopRepository)
     {
         _shopRepository = shopRepository;
-        _httpClient = httpClient;
     }
 
     #endregion
@@ -32,40 +27,6 @@ public class ShopController : ControllerBase
     [HttpPost(nameof(CreateShop))]
     public async Task<IActionResult> CreateShop(ShopCreateDto shopCreateDto)
     {
-        var shopId = await _shopRepository.CreateShop(shopCreateDto);
-
-        return Ok(shopId);
-    }
-
-    [Authorize]
-    [HttpPost(nameof(CreateShopByInstagram))]
-    public async Task<IActionResult> CreateShopByInstagram()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"https://graph.instagram.com/v22.0/me?fields=user_id,biography,username,name,profile_picture_url,followers_count&access_token={AccessToken}");
-
-        var response = await _httpClient.SendAsync(request);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return StatusCode(500, "Server error.");
-        }
-
-        var json = await response.Content.ReadAsStringAsync();
-        var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-        var shopCreateDto = new ShopCreateDto
-        {
-            IgId = data["user_id"],
-            InstagramId = data["username"],
-            InstagramUrl = $"https://www.instagram.com/{data["username"]}",
-            Name = data["name"],
-            Description = data["biography"],
-            Followers = Convert.ToUInt32(data["followers_count"]),
-            Logo = data["profile_picture_url"],
-            OwnerId = Convert.ToUInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value),
-            //IsVerified = false
-        };
-
         var shopId = await _shopRepository.CreateShop(shopCreateDto);
 
         return Ok(shopId);
@@ -189,20 +150,6 @@ public class ShopController : ControllerBase
         });
 
         return Ok(shopsDto);
-    }
-
-    [HttpGet(nameof(GetShopInstagramMediaObjects))]
-    public async Task<IActionResult> GetShopInstagramMediaObjects(uint shopId)
-    {
-        var shop = await _shopRepository.GetShopById(shopId);
-
-        var request = new HttpRequestMessage(HttpMethod.Get, $"https://graph.instagram.com/v22.0/{shop.IgId}/media?access_token={AccessToken}");
-
-        var response = await _httpClient.SendAsync(request);
-        var json = await response.Content.ReadAsStringAsync();
-        var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-        return Ok();
     }
 
     [HttpDelete($"{nameof(DeleteShop)}/{{shopId}}")]
