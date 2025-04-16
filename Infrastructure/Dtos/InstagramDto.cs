@@ -14,21 +14,21 @@ public class InstagramDto
         public string? ThumbnailSrc { get; set; }
         public string? DisplayUrl { get; set; }
         public Dimensions? Dimensions { get; set; }
-        // TODO - convert to ushort
-        public int? LikeCount { get; set; }
-        public int? CommentCount { get; set; }
+        public uint? LikeCount { get; set; }
+        public uint? CommentCount { get; set; }
+        public byte? CarouselMediaCount { get; set; }
         public string? VideoUrl { get; set; }
         public bool? IsVideo { get; set; }
         public Caption? Caption { get; set; }
-        public List<Slide>? Slides { get; set; }
+        public Location? Location { get; set; }
+        public List<Media>? CarouselMedia { get; set; }
         public Owner? Owner { get; set; }
     }
 
     public class Dimensions
     {
-        // TODO - convert to ushort
-        public int? Hieght { get; set; }
-        public int? Width { get; set; }
+        public ushort? Hieght { get; set; }
+        public ushort? Width { get; set; }
     }
 
     public class Caption
@@ -38,12 +38,22 @@ public class InstagramDto
         public DateTime? CreatedDate { get; set; }
     }
 
-    public class Slide
+    public class Location
+    {
+        public string? Id { get; set; }
+        public double? Lat { get; set; }
+        public double? Lng { get; set; }
+        public string? Name { get; set; }
+        public string? AddressJson { get; set; }
+    }
+
+    public class Media
     {
         public string? Id { get; set; }
         public string? ShortCode { get; set; }
         public string? DisplayUrl { get; set; }
         public Dimensions? Dimensions { get; set; }
+        public string? ImageUrl { get; set; }
         public string? VideoUrl { get; set; }
         public bool? IsVideo { get; set; }
     }
@@ -54,8 +64,7 @@ public class InstagramDto
         public string? Username { get; set; }
         public string? FullName { get; set; }
         public string? ProfilePictureUrl { get; set; }
-        // TODO - convert to ushort
-        public int? Followers { get; set; }
+        public uint? Followers { get; set; }
         public bool? IsVerified { get; set; }
     }
 }

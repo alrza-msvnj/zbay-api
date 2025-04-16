@@ -12,14 +12,19 @@ public class InstagramScraperController : ControllerBase
 {
     #region Initialization
 
-    private readonly HttpClient _httpClient = new();
+    private readonly HttpClient _httpClient = new() 
+    {
+        Timeout = TimeSpan.FromSeconds(20)
+    };
     private const string InstagramApiBaseUrl = "https://www.instagram.com/graphql/query";
     private readonly string InstagramDocumentId;
+    private readonly string InstagramAccountDocumentId;
     private readonly List<string> userAgentList;
 
     public InstagramScraperController(IConfiguration configuration)
     {
         InstagramDocumentId = configuration.GetValue<string>("InstagramApi:InstagramDocumentId");
+        InstagramAccountDocumentId = configuration.GetValue<string>("InstagramApi:InstagramAccountDocumentId");
         userAgentList = new()
         {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -97,26 +102,84 @@ public class InstagramScraperController : ControllerBase
         request.Content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
         var randomUserAgent = userAgentList[new Random().Next(userAgentList.Count)];
         request.Headers.Add("User-Agent", randomUserAgent);
+        request.Headers.Add("X-Requested-With", "XMLHttpRequest");
         request.Headers.Add("Referer", "https://www.instagram.com/");
         request.Headers.Add("Accept-Language", "en-US,en;q=0.9");
-        request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
         request.Headers.Add("Connection", "keep-alive");
 
         var response = await _httpClient.SendAsync(request);
 
-        if (response.StatusCode == HttpStatusCode.OK)
+        if (response.StatusCode != HttpStatusCode.OK)
         {
+            return BadRequest("Response error.");
+        }
+
+        var result = await response.Content.ReadAsStringAsync();
+        var instagramPostDto = InstagramFactory.MapInstagramPostToInstagramPostDto(result);
+
+        return Ok(instagramPostDto);
+    }
+
+    [HttpPost(nameof(ScrapePosts))]
+    public async Task<IActionResult> ScrapePosts([FromBody] string username, byte maxPages, byte pageSize = 12)
+    {
+        Console.WriteLine($"Scraping instagram posts: {username}");
+
+        string? endCursor = null;
+        byte currentPage = 1;
+
+        while (true)
+        {
+            var variables = new Dictionary<string, object?>
+            {
+                { "after", null },
+                { "before", null },
+                { "data", new Dictionary<string, object>
+                {
+                    { "count", pageSize },
+                    { "include_reel_media_seen_timestamp", true },
+                    { "include_relationship_info", true },
+                    { "latest_besties_reel_media", true },
+                    { "latest_reel_media", true },
+                } },
+                { "first", pageSize },
+                { "last", null },
+                { "username", username },
+                { "__relay_internal__pv__PolarisIsLoggedInrelayprovider", true },
+                { "__relay_internal__pv__PolarisShareSheetV3relayprovider", true }
+            };
+
+            var jsonVariables = JsonConvert.SerializeObject(variables, Formatting.None, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include
+            });
+            var encodedVariables = WebUtility.UrlEncode(jsonVariables);
+            var body = $"variables={encodedVariables}&doc_id={InstagramAccountDocumentId}";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, InstagramApiBaseUrl);
+            request.Content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
+            var randomUserAgent = userAgentList[new Random().Next(userAgentList.Count)];
+            request.Headers.Add("User-Agent", randomUserAgent);
+            request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            request.Headers.Add("Referer", "https://www.instagram.com/");
+            request.Headers.Add("Accept-Language", "en-US,en;q=0.9");
+            request.Headers.Add("Connection", "keep-alive");
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return BadRequest("Response error.");
+            }
+
             var result = await response.Content.ReadAsStringAsync();
+            var instagramPostsDto = InstagramFactory.MapInstagramPostsToInstagramPostsDto(result);
 
-            var instagramPost = InstagramFactory.MapToInstagramPostDto(result);
-
-            return Ok(instagramPost);
+            return Ok(instagramPostsDto);
 
             //var randomDelay = new Random().Next(3000, 5000); // Delay between 3 to 5 seconds
             //await Task.Delay(randomDelay);
         }
-
-        return BadRequest("Response error.");
     }
 
     #endregion
