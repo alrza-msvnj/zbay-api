@@ -1,11 +1,8 @@
-using Azure.Core;
+using Api.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
-using static Infrastructure.Dtos.InstagramDto;
 
 namespace Api.Controllers;
 
@@ -66,10 +63,10 @@ public class InstagramController : ControllerBase
 
         var response = await _httpClient.SendAsync(request);
         var result = await response.Content.ReadAsStringAsync();
-        var parsedResult = JsonConvert.DeserializeObject(result);
-        var a = JsonConvert.SerializeObject(parsedResult, Formatting.Indented);
 
-        return Ok(a);
+        var instagramPost = InstagramFactory.MapToInstagramPostDto(result);
+
+        return Ok();
     }
 
     //[Authorize]
