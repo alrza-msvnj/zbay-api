@@ -1,8 +1,4 @@
-using Api.Factories;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Net;
-using System.Text;
 
 namespace Api.Controllers;
 
@@ -13,61 +9,16 @@ public class InstagramController : ControllerBase
     #region Initialization
 
     private readonly HttpClient _httpClient = new();
-    private const string InstagramApiBaseUrl = "https://www.instagram.com/graphql/query";
     private readonly string TestAccessToken;
-    private readonly string InstagramDocumentId;
 
     public InstagramController(IConfiguration configuration)
     {
         TestAccessToken = configuration.GetValue<string>("InstagramApp:TestAccessToken");
-        InstagramDocumentId = configuration.GetValue<string>("InstagramApi:InstagramDocumentId");
     }
 
     #endregion
 
     #region Apis
-
-    [HttpPost(nameof(ScrapePost))]
-    public async Task<IActionResult> ScrapePost([FromBody] string postUrlOrPostShortCode)
-    {
-        string postShortCode;
-        if (postUrlOrPostShortCode.Contains("http"))
-        {
-            postShortCode = postUrlOrPostShortCode.Split("/p/").Last().Split('/').First();
-        }
-        else
-        {
-            postShortCode = postUrlOrPostShortCode;
-        }
-
-        Console.WriteLine($"Scraping instagram post: {postShortCode}");
-
-        var variables = new Dictionary<string, object?>
-        {
-            { "shortcode", postShortCode },
-            { "fetch_tagged_user_count", null },
-            { "hoisted_comment_id", null },
-            { "hoisted_reply_id", null }
-        };
-        var jsonVariables = JsonConvert.SerializeObject(variables, Formatting.None, new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Include
-        });
-        var encodedVariables = WebUtility.UrlEncode(jsonVariables);
-        var body = $"variables={encodedVariables}&doc_id={InstagramDocumentId}";
-
-        var request = new HttpRequestMessage(HttpMethod.Post, InstagramApiBaseUrl) 
-        {
-            Content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded")
-        };
-
-        var response = await _httpClient.SendAsync(request);
-        var result = await response.Content.ReadAsStringAsync();
-
-        var instagramPost = InstagramFactory.MapToInstagramPostDto(result);
-
-        return Ok(instagramPost);
-    }
 
     //[Authorize]
     //[HttpPost(nameof(CreateShopByInstagram))]
