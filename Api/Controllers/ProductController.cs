@@ -1,3 +1,4 @@
+using Api.Factories;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using static Infrastructure.Dtos.ProductDto;
@@ -35,27 +36,7 @@ public class ProductController : ControllerBase
     {
         var product = await _productRepository.GetProductById(productId);
 
-        var productDto = new ProductResponseDto
-        {
-            Id = product.Id,
-            Uuid = product.Uuid,
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price,
-            OriginalPrice = product.OriginalPrice,
-            DiscountPercentage = product.DiscountPercentage,
-            Stock = product.Stock,
-            ShopId = product.ShopId,
-            HasDiscount = product.HasDiscount,
-            IsAvailable = product.IsAvailable,
-            IsNew = product.IsNew,
-            IsDeleted = product.IsDeleted,
-            CreateDate = product.CreateDate,
-            UpdateDate = product.UpdateDate,
-            Images = product.Images,
-            Categories = product.ProductCategories.ToList().Select(pc => pc.Category).ToList(),
-            Shop = product.Shop
-        };
+        var productDto = ProductFactory.MapToProductResponseDto(product);
 
         return Ok(productDto);
     }
@@ -68,26 +49,7 @@ public class ProductController : ControllerBase
         var productsDto = new List<ProductResponseDto>();
         products.ForEach(p =>
         {
-            var productDto = new ProductResponseDto
-            {
-                Id = p.Id,
-                Uuid = p.Uuid,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                OriginalPrice = p.OriginalPrice,
-                DiscountPercentage = p.DiscountPercentage,
-                Stock = p.Stock,
-                ShopId = p.ShopId,
-                HasDiscount = p.HasDiscount,
-                IsAvailable = p.IsAvailable,
-                IsNew = p.IsNew,
-                IsDeleted = p.IsDeleted,
-                CreateDate = p.CreateDate,
-                UpdateDate = p.UpdateDate,
-                Images = p.Images,
-                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
-            };
+            var productDto = ProductFactory.MapToProductResponseDto(p);
 
             productsDto.Add(productDto);
         });
@@ -103,26 +65,7 @@ public class ProductController : ControllerBase
         var productsDto = new List<ProductResponseDto>();
         products.ForEach(p =>
         {
-            var productDto = new ProductResponseDto
-            {
-                Id = p.Id,
-                Uuid = p.Uuid,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                OriginalPrice = p.OriginalPrice,
-                DiscountPercentage = p.DiscountPercentage,
-                Stock = p.Stock,
-                ShopId = p.ShopId,
-                HasDiscount = p.HasDiscount,
-                IsAvailable = p.IsAvailable,
-                IsNew = p.IsNew,
-                IsDeleted = p.IsDeleted,
-                CreateDate = p.CreateDate,
-                UpdateDate = p.UpdateDate,
-                Images = p.Images,
-                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
-            };
+            var productDto = ProductFactory.MapToProductResponseDto(p);
 
             productsDto.Add(productDto);
         });
@@ -138,26 +81,7 @@ public class ProductController : ControllerBase
         var productsDto = new List<ProductResponseDto>();
         products.ForEach(p =>
         {
-            var productDto = new ProductResponseDto
-            {
-                Id = p.Id,
-                Uuid = p.Uuid,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                OriginalPrice = p.OriginalPrice,
-                DiscountPercentage = p.DiscountPercentage,
-                Stock = p.Stock,
-                ShopId = p.ShopId,
-                HasDiscount = p.HasDiscount,
-                IsAvailable = p.IsAvailable,
-                IsNew = p.IsNew,
-                IsDeleted = p.IsDeleted,
-                CreateDate = p.CreateDate,
-                UpdateDate = p.UpdateDate,
-                Images = p.Images,
-                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
-            };
+            var productDto = ProductFactory.MapToProductResponseDto(p);
 
             productsDto.Add(productDto);
         });
@@ -173,26 +97,7 @@ public class ProductController : ControllerBase
         var productsDto = new List<ProductResponseDto>();
         products.ForEach(p =>
         {
-            var productDto = new ProductResponseDto
-            {
-                Id = p.Id,
-                Uuid = p.Uuid,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                OriginalPrice = p.OriginalPrice,
-                DiscountPercentage = p.DiscountPercentage,
-                Stock = p.Stock,
-                ShopId = p.ShopId,
-                HasDiscount = p.HasDiscount,
-                IsAvailable = p.IsAvailable,
-                IsNew = p.IsNew,
-                IsDeleted = p.IsDeleted,
-                CreateDate = p.CreateDate,
-                UpdateDate = p.UpdateDate,
-                Images = p.Images,
-                Categories = p.ProductCategories.ToList().Select(pc => pc.Category).ToList()
-            };
+            var productDto = ProductFactory.MapToProductResponseDto(p);
 
             productsDto.Add(productDto);
         });

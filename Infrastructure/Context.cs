@@ -36,13 +36,7 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
-            e.HasIndex(e => e.InstagramId)
-            .IsUnique();
-
-            e.HasIndex(e => e.InstagramUrl)
-            .IsUnique();
-
-            e.HasIndex(e => e.Name)
+            e.HasIndex(e => e.IgUsername)
             .IsUnique();
 
             e.HasOne(s => s.Owner)
@@ -62,6 +56,9 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
+            e.HasIndex(e => e.IgCode)
+            .IsUnique();
+
             e.HasOne(p => p.Shop)
             .WithMany(s => s.Products)
             .HasForeignKey(p => p.ShopId);
@@ -69,6 +66,26 @@ public class Context : DbContext
             e.HasMany(p => p.ProductCategories)
             .WithOne(pc => pc.Product)
             .HasForeignKey(pc => pc.ProductId);
+        });
+
+        modelBuilder.Entity<Dimensions>(e =>
+        {
+            e.HasNoKey();
+        });
+
+        modelBuilder.Entity<Caption>(e =>
+        {
+            e.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<Location>(e =>
+        {
+            e.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<Media>(e =>
+        {
+            e.HasKey(e => e.Id);
         });
 
         modelBuilder.Entity<Category>(e =>

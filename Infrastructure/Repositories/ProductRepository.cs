@@ -27,18 +27,32 @@ public class ProductRepository : IProductRepository
         var product = new Product
         {
             Uuid = Guid.NewGuid(),
+            IgId = productCreateDto.IgId,
             Name = productCreateDto.Name,
             Description = productCreateDto.Description,
             Price = productCreateDto.OriginalPrice - productCreateDto.OriginalPrice * productCreateDto.DiscountPercentage / 100,
             OriginalPrice = productCreateDto.OriginalPrice,
             DiscountPercentage = productCreateDto.DiscountPercentage,
             Stock = productCreateDto.Stock,
+            IgCode = productCreateDto.IgCode,
+            IgThumbnailSrc = productCreateDto.IgThumbnailSrc,
+            IgDisplayUrl = productCreateDto.IgDisplayUrl,
+            IgLikeCount = productCreateDto.IgLikeCount,
+            IgCommentCount = productCreateDto.IgCommentCount,
+            IgCarouselMediaCount = productCreateDto.IgCarouselMediaCount,
+            IgVideoUrl = productCreateDto.IgVideoUrl,
             ShopId = productCreateDto.ShopId,
             HasDiscount = productCreateDto.DiscountPercentage > 0,
             IsAvailable = productCreateDto.IsAvailable,
             IsNew = true,
+            IsDeleted = false,
+            IgIsVideo = productCreateDto.IgIsVideo,
             CreateDate = DateTime.UtcNow,
-            Images = productCreateDto.Images
+            Images = productCreateDto.Images,
+            IgDimensions = productCreateDto.IgDimensions,
+            IgCaption = productCreateDto.IgCaption,
+            IgLocation = productCreateDto.IgLocation,
+            IgCarouselMedia = productCreateDto.IgCarouselMedia
         };
 
         await _context.Product.AddAsync(product);
@@ -123,6 +137,7 @@ public class ProductRepository : IProductRepository
             throw new InvalidOperationException("Product does not exist.");
         }
 
+        // TODO
         product.Name = productUpdateDto.Name ?? product.Name;
         product.Description = productUpdateDto.Description ?? product.Description;
         product.Price = productUpdateDto.Price ?? product.Price;

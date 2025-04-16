@@ -1,3 +1,4 @@
+using Api.Factories;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,24 +38,7 @@ public class ShopController : ControllerBase
     {
         var shop = await _shopRepository.GetShopById(shopId);
 
-        var shopDto = new ShopResponseDto
-        {
-            Id = shop.Id,
-            Uuid = shop.Uuid,
-            InstagramId = shop.InstagramId,
-            InstagramUrl = shop.InstagramUrl,
-            Name = shop.Name,
-            Description = shop.Description,
-            Followers = shop.Followers,
-            Logo = shop.Logo,
-            TotalProducts = shop.TotalProducts,
-            OwnerId = shop.OwnerId,
-            IsVerified = shop.IsVerified,
-            IsValidated = shop.IsValidated,
-            IsDeleted = shop.IsDeleted,
-            JoinDate = shop.JoinDate,
-            Categories = shop.ShopCategories.ToList().Select(sc => sc.Category).ToList(),
-        };
+        var shopDto = ShopFactory.MapToShopResponseDto(shop);
 
         return Ok(shopDto);
     }
@@ -64,24 +48,7 @@ public class ShopController : ControllerBase
     {
         var shop = await _shopRepository.GetShopByOwnerId(userId);
 
-        var shopDto = new ShopResponseDto
-        {
-            Id = shop.Id,
-            Uuid = shop.Uuid,
-            InstagramId = shop.InstagramId,
-            InstagramUrl = shop.InstagramUrl,
-            Name = shop.Name,
-            Description = shop.Description,
-            Followers = shop.Followers,
-            Logo = shop.Logo,
-            TotalProducts = shop.TotalProducts,
-            OwnerId = shop.OwnerId,
-            IsVerified = shop.IsVerified,
-            IsValidated = shop.IsValidated,
-            IsDeleted = shop.IsDeleted,
-            JoinDate = shop.JoinDate,
-            Categories = shop.ShopCategories.ToList().Select(sc => sc.Category).ToList(),
-        };
+        var shopDto = ShopFactory.MapToShopResponseDto(shop);
 
         return Ok(shopDto);
     }
@@ -94,24 +61,7 @@ public class ShopController : ControllerBase
         var shopsDto = new List<ShopResponseDto>();
         shops.ForEach(s =>
         {
-            var shopDto = new ShopResponseDto
-            {
-                Id = s.Id,
-                Uuid = s.Uuid,
-                InstagramId = s.InstagramId,
-                InstagramUrl = s.InstagramUrl,
-                Name = s.Name,
-                Description = s.Description,
-                Followers = s.Followers,
-                Logo = s.Logo,
-                TotalProducts = s.TotalProducts,
-                OwnerId = s.OwnerId,
-                IsVerified = s.IsVerified,
-                IsValidated = s.IsValidated,
-                IsDeleted = s.IsDeleted,
-                JoinDate = s.JoinDate,
-                Categories = s.ShopCategories.ToList().Select(sc => sc.Category).ToList(),
-            };
+            var shopDto = ShopFactory.MapToShopResponseDto(s);
 
             shopsDto.Add(shopDto);
         });
@@ -127,24 +77,7 @@ public class ShopController : ControllerBase
         var shopsDto = new List<ShopResponseDto>();
         shops.ForEach(s =>
         {
-            var shopDto = new ShopResponseDto
-            {
-                Id = s.Id,
-                Uuid = s.Uuid,
-                InstagramId = s.InstagramId,
-                InstagramUrl = s.InstagramUrl,
-                Name = s.Name,
-                Description = s.Description,
-                Followers = s.Followers,
-                Logo = s.Logo,
-                TotalProducts = s.TotalProducts,
-                OwnerId = s.OwnerId,
-                IsVerified = s.IsVerified,
-                IsValidated = s.IsValidated,
-                IsDeleted = s.IsDeleted,
-                JoinDate = s.JoinDate,
-                Categories = s.ShopCategories.ToList().Select(sc => sc.Category).ToList(),
-            };
+            var shopDto = ShopFactory.MapToShopResponseDto(s);
 
             shopsDto.Add(shopDto);
         });

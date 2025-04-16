@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Domain.Entities;
 
@@ -6,23 +7,69 @@ public class Product
 {
     public ulong Id { get; set; }
     public Guid Uuid { get; set; }
+    public string? IgId { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public decimal Price { get; set; }
     public decimal OriginalPrice { get; set; }
     public byte DiscountPercentage { get; set; }
     public uint Stock { get; set; }
+    public string? IgCode { get; set; }
+    public string? IgThumbnailSrc { get; set; }
+    public string? IgDisplayUrl { get; set; }
+    public uint? IgLikeCount { get; set; }
+    public uint? IgCommentCount { get; set; }
+    public byte? IgCarouselMediaCount { get; set; }
+    public string? IgVideoUrl { get; set; }
     public uint ShopId { get; set; }
     public bool HasDiscount { get; set; }
     public bool IsAvailable { get; set; }
     public bool IsNew { get; set; }
     public bool IsDeleted { get; set; }
+    public bool? IgIsVideo { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
     public required List<string> Images { get; set; }
+    public Dimensions? IgDimensions { get; set; }
+    public Caption? IgCaption { get; set; }
+    public Location? IgLocation { get; set; }
+    public List<Media>? IgCarouselMedia { get; set; }
 
     [JsonIgnore]
     public virtual Shop Shop { get; set; }
     [JsonIgnore]
     public virtual ICollection<ProductCategory> ProductCategories { get; set; }
+}
+
+public class Dimensions
+{
+    public ushort? Hieght { get; set; }
+    public ushort? Width { get; set; }
+}
+
+public class Caption
+{
+    public string? Id { get; set; }
+    public string? Text { get; set; }
+    public DateTime? CreatedDate { get; set; }
+}
+
+public class Location
+{
+    public string? Id { get; set; }
+    public double? Lat { get; set; }
+    public double? Lng { get; set; }
+    public string? Name { get; set; }
+    public string? AddressJson { get; set; }
+}
+
+public class Media
+{
+    public string? Id { get; set; }
+    public string? ShortCode { get; set; }
+    public string? DisplayUrl { get; set; }
+    public string? ImageUrl { get; set; }
+    public string? VideoUrl { get; set; }
+    public bool? IsVideo { get; set; }
+    public Dimensions? Dimensions { get; set; }
 }

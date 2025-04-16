@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Domain.Entities;
+using Newtonsoft.Json;
 using static Infrastructure.Dtos.InstagramDto;
 
 namespace Api.Factories;
@@ -13,7 +13,7 @@ public static class InstagramFactory
         var instagramPost = new InstagramPostDto
         {
             Id = parsedData["data"]?["xdt_shortcode_media"]?["id"]?.ToString(),
-            ShortCode = parsedData["data"]?["xdt_shortcode_media"]?["shortcode"]?.ToString(),
+            Code = parsedData["data"]?["xdt_shortcode_media"]?["shortcode"]?.ToString(),
             ThumbnailSrc = parsedData["data"]?["xdt_shortcode_media"]?["thumbnail_src"]?.ToString(),
             DisplayUrl = parsedData["data"]?["xdt_shortcode_media"]?["display_url"]?.ToString(),
             Dimensions = new Dimensions
@@ -107,7 +107,7 @@ public static class InstagramFactory
             var instagramPostDto = new InstagramPostDto
             {
                 Id = instagramPost["node"]?["pk"]?.ToString(),
-                ShortCode = instagramPost["node"]?["code"]?.ToString(),
+                Code = instagramPost["node"]?["code"]?.ToString(),
                 DisplayUrl = instagramPost["node"]?["display_uri"]?.ToString(),
                 Dimensions = new Dimensions
                 {
