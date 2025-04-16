@@ -42,19 +42,25 @@ public static class InstagramFactory
         };
 
         var slides = parsedData["data"]?["xdt_shortcode_media"]?["edge_sidecar_to_children"]?["edges"].ToObject<List<object>>();
+
+        if (slides is null)
+        {
+            return instagramPost;
+        }
+
         foreach (var slide in slides)
         {
             instagramPost.Slides.Add(new Slide
             {
-                Id = slide["node"]["id"],
-                ShortCode = slide["node"]["shortcode"],
-                DisplayUrl = slide["node"]["display_url"],
+                Id = slide["node"]?["id"],
+                ShortCode = slide["node"]?["shortcode"],
+                DisplayUrl = slide["node"]?["display_url"],
                 Dimensions = new Dimensions
                 {
-                    Hieght = slide["node"]["dimensions"]["height"],
-                    Width = slide["node"]["dimensions"]["width"]
+                    Hieght = slide["node"]?["dimensions"]?["height"],
+                    Width = slide["node"]?["dimensions"]?["width"]
                 },
-                IsVideo = bool.Parse(slide["node"]["is_video"].ToString())
+                IsVideo = bool.Parse(slide["node"]?["is_video"].ToString())
             });
         }
 
