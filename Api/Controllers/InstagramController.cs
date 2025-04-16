@@ -66,7 +66,7 @@ public class InstagramController : ControllerBase
 
         var instagramPost = InstagramFactory.MapToInstagramPostDto(result);
 
-        return Ok();
+        return Ok(instagramPost);
     }
 
     //[Authorize]
