@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250406212459_Initial")]
+    [Migration("20250417072126_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -70,6 +70,33 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("HasDiscount")
                         .HasColumnType("bit");
 
+                    b.Property<byte?>("IgCarouselMediaCount")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("IgCode")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long?>("IgCommentCount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("IgDisplayUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IgId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IgIsVideo")
+                        .HasColumnType("bit");
+
+                    b.Property<long?>("IgLikeCount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("IgThumbnailSrc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IgVideoUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Images")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -107,6 +134,10 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IgCode")
+                        .IsUnique()
+                        .HasFilter("[IgCode] IS NOT NULL");
+
                     b.HasIndex("ShopId");
 
                     b.ToTable("Product");
@@ -127,6 +158,48 @@ namespace Infrastructure.Migrations
                     b.ToTable("ProductCategory");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ProductIgCarouselMedia", b =>
+                {
+                    b.Property<decimal>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(20,0)");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+
+                    b.Property<string>("DisplayUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IgId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsVideo")
+                        .HasColumnType("bit");
+
+                    b.Property<byte>("Order")
+                        .HasColumnType("tinyint");
+
+                    b.Property<decimal>("ProductId")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<string>("ShortCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("VideoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductIgCarouselMedia");
+                });
+
             modelBuilder.Entity("Domain.Entities.Shop", b =>
                 {
                     b.Property<long>("Id")
@@ -138,18 +211,16 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Followers")
+                    b.Property<long?>("IgFollowers")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("IgFullName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IgId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InstagramId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("InstagramUrl")
-                        .IsRequired()
+                    b.Property<string>("IgUsername")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsDeleted")
@@ -165,12 +236,11 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Logo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("OwnerId")
                         .HasColumnType("bigint");
@@ -183,14 +253,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InstagramId")
-                        .IsUnique();
-
-                    b.HasIndex("InstagramUrl")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("IgUsername")
+                        .IsUnique()
+                        .HasFilter("[IgUsername] IS NOT NULL");
 
                     b.HasIndex("OwnerId")
                         .IsUnique();
@@ -288,6 +353,81 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("Domain.Entities.Caption", "IgCaption", b1 =>
+                        {
+                            b1.Property<decimal>("ProductId")
+                                .HasColumnType("decimal(20,0)");
+
+                            b1.Property<DateTime?>("CreatedDate")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<string>("Id")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Text")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Product");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.OwnsOne("Domain.Entities.Location", "IgLocation", b1 =>
+                        {
+                            b1.Property<decimal>("ProductId")
+                                .HasColumnType("decimal(20,0)");
+
+                            b1.Property<string>("AddressJson")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Id")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<double?>("Lat")
+                                .HasColumnType("float");
+
+                            b1.Property<double?>("Lng")
+                                .HasColumnType("float");
+
+                            b1.Property<string>("Name")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Product");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.OwnsOne("Domain.Entities.Dimensions", "IgDimensions", b1 =>
+                        {
+                            b1.Property<decimal>("ProductId")
+                                .HasColumnType("decimal(20,0)");
+
+                            b1.Property<int?>("Hieght")
+                                .HasColumnType("int");
+
+                            b1.Property<int?>("Width")
+                                .HasColumnType("int");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("Product");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.Navigation("IgCaption");
+
+                    b.Navigation("IgDimensions");
+
+                    b.Navigation("IgLocation");
+
                     b.Navigation("Shop");
                 });
 
@@ -306,6 +446,38 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductIgCarouselMedia", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany("ProductIgCarouselMedia")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Entities.Dimensions", "Dimensions", b1 =>
+                        {
+                            b1.Property<decimal>("ProductIgCarouselMediaId")
+                                .HasColumnType("decimal(20,0)");
+
+                            b1.Property<int?>("Hieght")
+                                .HasColumnType("int");
+
+                            b1.Property<int?>("Width")
+                                .HasColumnType("int");
+
+                            b1.HasKey("ProductIgCarouselMediaId");
+
+                            b1.ToTable("ProductIgCarouselMedia");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductIgCarouselMediaId");
+                        });
+
+                    b.Navigation("Dimensions");
 
                     b.Navigation("Product");
                 });
@@ -352,6 +524,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Navigation("ProductCategories");
+
+                    b.Navigation("ProductIgCarouselMedia");
                 });
 
             modelBuilder.Entity("Domain.Entities.Shop", b =>

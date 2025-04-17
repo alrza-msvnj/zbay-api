@@ -65,10 +65,10 @@ public static class InstagramFactory
             return instagramPost;
         }
 
-        instagramPost.CarouselMedia = new List<Media>();
+        instagramPost.CarouselMedia = new List<ProductIgCarouselMedia>();
         foreach (var media in carouselMedia)
         {
-            instagramPost.CarouselMedia.Add(new Media
+            instagramPost.CarouselMedia.Add(new ProductIgCarouselMedia
             {
                 Id = media["node"]?["id"]?.ToString(),
                 ShortCode = media["node"]?["shortcode"]?.ToString(),
@@ -160,10 +160,10 @@ public static class InstagramFactory
                 continue;
             }
 
-            instagramPostDto.CarouselMedia = new List<Media>();
+            instagramPostDto.CarouselMedia = new List<ProductIgCarouselMedia>();
             foreach (var media in carouselMedia)
             {
-                var mediaDto = new Media
+                var mediaDto = new ProductIgCarouselMedia
                 {
                     Id = media["pk"]?.ToString(),
                     DisplayUrl = media["display_uri"]?.ToString(),

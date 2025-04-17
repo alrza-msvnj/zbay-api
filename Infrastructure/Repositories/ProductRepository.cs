@@ -52,7 +52,6 @@ public class ProductRepository : IProductRepository
             IgDimensions = productCreateDto.IgDimensions,
             IgCaption = productCreateDto.IgCaption,
             IgLocation = productCreateDto.IgLocation,
-            IgCarouselMedia = productCreateDto.IgCarouselMedia
         };
 
         await _context.Product.AddAsync(product);

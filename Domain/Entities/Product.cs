@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Domain.Entities;
 
@@ -33,12 +32,13 @@ public class Product
     public Dimensions? IgDimensions { get; set; }
     public Caption? IgCaption { get; set; }
     public Location? IgLocation { get; set; }
-    public List<Media>? IgCarouselMedia { get; set; }
 
     [JsonIgnore]
-    public virtual Shop Shop { get; set; }
+    public virtual ICollection<ProductIgCarouselMedia> ProductIgCarouselMedia { get; set; }
     [JsonIgnore]
     public virtual ICollection<ProductCategory> ProductCategories { get; set; }
+    [JsonIgnore]
+    public virtual Shop Shop { get; set; }
 }
 
 public class Dimensions
@@ -61,15 +61,4 @@ public class Location
     public double? Lng { get; set; }
     public string? Name { get; set; }
     public string? AddressJson { get; set; }
-}
-
-public class Media
-{
-    public string? Id { get; set; }
-    public string? ShortCode { get; set; }
-    public string? DisplayUrl { get; set; }
-    public string? ImageUrl { get; set; }
-    public string? VideoUrl { get; set; }
-    public bool? IsVideo { get; set; }
-    public Dimensions? Dimensions { get; set; }
 }

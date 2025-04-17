@@ -23,7 +23,7 @@ public class InstagramDto
         public bool? IsVideo { get; set; }
         public Caption? Caption { get; set; }
         public Location? Location { get; set; }
-        public List<Media>? CarouselMedia { get; set; }
+        public List<ProductIgCarouselMedia>? CarouselMedia { get; set; }
         public Owner? Owner { get; set; }
     }
 

@@ -34,7 +34,7 @@ public class ProductDto
         public Dimensions? IgDimensions { get; set; }
         public Caption? IgCaption { get; set; }
         public Location? IgLocation { get; set; }
-        public List<Media>? IgCarouselMedia { get; set; }
+        public List<ProductIgCarouselMedia>? IgCarouselMedia { get; set; }
         public List<Category>? Categories { get; set; }
         public Shop? Shop { get; set; }
 
@@ -62,7 +62,7 @@ public class ProductDto
         public bool IsAvailable { get; set; }
         public bool? IgIsVideo { get; set; }
         public required List<string> Images { get; set; }
-        public List<Media>? IgCarouselMedia { get; set; }
+        public List<ProductIgCarouselMedia>? IgCarouselMedia { get; set; }
         public required List<ushort> CategoryIds { get; set; }
     }
 

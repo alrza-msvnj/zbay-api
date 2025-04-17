@@ -37,7 +37,6 @@ public static class ProductFactory
             IgDimensions = product.IgDimensions,
             IgCaption = product.IgCaption,
             IgLocation = product.IgLocation,
-            IgCarouselMedia = product.IgCarouselMedia,
             Categories = product.ProductCategories.ToList().Select(pc => pc.Category).ToList(),
             Shop = product.Shop
         };

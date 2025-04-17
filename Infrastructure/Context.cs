@@ -11,6 +11,7 @@ public class Context : DbContext
     public DbSet<User> User { get; set; }
     public DbSet<Shop> Shop { get; set; }
     public DbSet<Product> Product { get; set; }
+    public DbSet<ProductIgCarouselMedia> ProductIgCarouselMedia { get; set; }
     public DbSet<Category> Category { get; set; }
     public DbSet<ShopCategory> ShopCategory { get; set; }
     public DbSet<ProductCategory> ProductCategory { get; set; }
@@ -66,26 +67,21 @@ public class Context : DbContext
             e.HasMany(p => p.ProductCategories)
             .WithOne(pc => pc.Product)
             .HasForeignKey(pc => pc.ProductId);
+
+            e.OwnsOne(p => p.IgDimensions);
+            e.OwnsOne(p => p.IgCaption);
+            e.OwnsOne(p => p.IgLocation);
         });
 
-        modelBuilder.Entity<Dimensions>(e =>
-        {
-            e.HasNoKey();
-        });
-
-        modelBuilder.Entity<Caption>(e =>
-        {
-            e.HasKey(e => e.Id);
-        });
-
-        modelBuilder.Entity<Location>(e =>
+        modelBuilder.Entity<ProductIgCarouselMedia>(e =>
         {
             e.HasKey(e => e.Id);
-        });
 
-        modelBuilder.Entity<Media>(e =>
-        {
-            e.HasKey(e => e.Id);
+            e.HasOne(picm => picm.Product)
+            .WithMany(p => p.ProductIgCarouselMedia)
+            .HasForeignKey(picm => picm.ProductId);
+
+            e.OwnsOne(picm => picm.Dimensions);
         });
 
         modelBuilder.Entity<Category>(e =>
