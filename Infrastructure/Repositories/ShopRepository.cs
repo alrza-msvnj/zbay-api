@@ -76,7 +76,12 @@ public class ShopRepository : IShopRepository
 
     public async Task<Shop> GetShopByIgId(string igId)
     {
-        return await _context.Shop.Where(s => !s.IsDeleted && s.IgId == igId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
+        return await _context.Shop.FirstOrDefaultAsync(s => s.IgId == igId);
+    }
+
+    public async Task<Shop> GetShopByIgUsername(string igUsername)
+    {
+        return await _context.Shop.FirstOrDefaultAsync(s => s.IgUsername == igUsername);
     }
 
     public async Task<List<Shop>> GetAllShops(GetAllDto getAllDto)
