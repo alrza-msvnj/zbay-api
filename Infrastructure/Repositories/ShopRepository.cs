@@ -74,6 +74,11 @@ public class ShopRepository : IShopRepository
         return await _context.Shop.Where(s => !s.IsDeleted && s.OwnerId == ownerId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
 
+    public async Task<Shop> GetShopByIgId(string igId)
+    {
+        return await _context.Shop.Where(s => !s.IsDeleted && s.IgId == igId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
+    }
+
     public async Task<List<Shop>> GetAllShops(GetAllDto getAllDto)
     {
         if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())

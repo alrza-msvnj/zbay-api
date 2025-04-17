@@ -4,11 +4,6 @@ namespace Infrastructure.Dtos;
 
 public class InstagramDto
 {
-    public class InstagramScrapePostsDto
-    {
-        public required List<string> InstagramUsernames { get; set; }
-    }
-
     public class InstagramPostDto
     {
         public string? Id { get; set; }
@@ -23,7 +18,7 @@ public class InstagramDto
         public bool? IsVideo { get; set; }
         public Caption? Caption { get; set; }
         public Location? Location { get; set; }
-        public List<ProductIgCarouselMedia>? CarouselMedia { get; set; }
+        public List<Media>? CarouselMedia { get; set; }
         public Owner? Owner { get; set; }
     }
 
@@ -35,5 +30,16 @@ public class InstagramDto
         public string? ProfilePictureUrl { get; set; }
         public uint? Followers { get; set; }
         public bool? IsVerified { get; set; }
+    }
+
+    public class Media
+    {
+        public string? Id { get; set; }
+        public string? Code { get; set; }
+        public string? DisplayUrl { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? VideoUrl { get; set; }
+        public bool? IsVideo { get; set; }
+        public Dimensions? Dimensions { get; set; }
     }
 }

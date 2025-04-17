@@ -65,13 +65,13 @@ public static class InstagramFactory
             return instagramPost;
         }
 
-        instagramPost.CarouselMedia = new List<ProductIgCarouselMedia>();
+        instagramPost.CarouselMedia = new List<Media>();
         foreach (var media in carouselMedia)
         {
-            instagramPost.CarouselMedia.Add(new ProductIgCarouselMedia
+            instagramPost.CarouselMedia.Add(new Media
             {
                 Id = media["node"]?["id"]?.ToString(),
-                ShortCode = media["node"]?["shortcode"]?.ToString(),
+                Code = media["node"]?["shortcode"]?.ToString(),
                 DisplayUrl = media["node"]?["display_url"]?.ToString(),
                 Dimensions = new Dimensions
                 {
@@ -89,6 +89,7 @@ public static class InstagramFactory
     public static List<InstagramPostDto> MapInstagramPostsToInstagramPostsDto(string data)
     {
         var parsedData = JsonConvert.DeserializeObject<dynamic>(data);
+        var a = JsonConvert.SerializeObject(parsedData, Formatting.Indented);
         var instagramPosts = parsedData?["data"]?["xdt_api__v1__feed__user_timeline_graphql_connection"]["edges"]?.ToObject<List<object>>();
 
         if (instagramPosts is null)
@@ -157,13 +158,15 @@ public static class InstagramFactory
 
             if (carouselMedia is null)
             {
+                instagramPostsDto.Add(instagramPostDto);
+
                 continue;
             }
 
-            instagramPostDto.CarouselMedia = new List<ProductIgCarouselMedia>();
+            instagramPostDto.CarouselMedia = new List<Media>();
             foreach (var media in carouselMedia)
             {
-                var mediaDto = new ProductIgCarouselMedia
+                var mediaDto = new Media
                 {
                     Id = media["pk"]?.ToString(),
                     DisplayUrl = media["display_uri"]?.ToString(),

@@ -9,6 +9,7 @@ public interface IShopRepository
     Task<uint> CreateShop(ShopCreateDto shopCreateDto);
     Task<Shop> GetShopById(uint shopId);
     Task<Shop> GetShopByOwnerId(uint ownerId);
+    Task<Shop> GetShopByIgId(string igId);
     Task<List<Shop>> GetAllShops(GetAllDto shopGetAllDto);
     Task<List<Shop>> GetAllUnvalidatedShops();
     Task<uint> DeleteShop(uint shopId);

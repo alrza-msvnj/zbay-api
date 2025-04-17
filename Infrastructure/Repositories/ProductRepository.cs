@@ -2,6 +2,7 @@
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using static Infrastructure.Dtos.InstagramDto;
 using static Infrastructure.Dtos.ProductDto;
 using static Infrastructure.Dtos.SharedDto;
 
@@ -27,31 +28,19 @@ public class ProductRepository : IProductRepository
         var product = new Product
         {
             Uuid = Guid.NewGuid(),
-            IgId = productCreateDto.IgId,
             Name = productCreateDto.Name,
             Description = productCreateDto.Description,
             Price = productCreateDto.OriginalPrice - productCreateDto.OriginalPrice * productCreateDto.DiscountPercentage / 100,
             OriginalPrice = productCreateDto.OriginalPrice,
             DiscountPercentage = productCreateDto.DiscountPercentage,
             Stock = productCreateDto.Stock,
-            IgCode = productCreateDto.IgCode,
-            IgThumbnailSrc = productCreateDto.IgThumbnailSrc,
-            IgDisplayUrl = productCreateDto.IgDisplayUrl,
-            IgLikeCount = productCreateDto.IgLikeCount,
-            IgCommentCount = productCreateDto.IgCommentCount,
-            IgCarouselMediaCount = productCreateDto.IgCarouselMediaCount,
-            IgVideoUrl = productCreateDto.IgVideoUrl,
             ShopId = productCreateDto.ShopId,
             HasDiscount = productCreateDto.DiscountPercentage > 0,
-            IsAvailable = productCreateDto.IsAvailable,
+            IsAvailable = productCreateDto.Stock > 0,
             IsNew = true,
             IsDeleted = false,
-            IgIsVideo = productCreateDto.IgIsVideo,
             CreateDate = DateTime.UtcNow,
-            Images = productCreateDto.Images,
-            IgDimensions = productCreateDto.IgDimensions,
-            IgCaption = productCreateDto.IgCaption,
-            IgLocation = productCreateDto.IgLocation,
+            Images = productCreateDto.Images
         };
 
         await _context.Product.AddAsync(product);
@@ -67,6 +56,166 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
 
         return product.Id;
+    }
+
+    public async Task<ulong> CreateIgProduct(InstagramPostDto instagramPostDto, uint shopId, List<ushort> categoryIds)
+    {
+        var product = new Product
+        {
+            Uuid = Guid.NewGuid(),
+            IgId = instagramPostDto.Id,
+            Name = "",
+            Description = instagramPostDto.Caption?.Text,
+            Price = 0,
+            OriginalPrice = 0,
+            DiscountPercentage = 0,
+            Stock = 0,
+            IgCode = instagramPostDto.Code,
+            IgThumbnailSrc = instagramPostDto.ThumbnailSrc,
+            IgDisplayUrl = instagramPostDto.DisplayUrl,
+            IgLikeCount = instagramPostDto.LikeCount,
+            IgCommentCount = instagramPostDto.CommentCount,
+            IgCarouselMediaCount = instagramPostDto.CarouselMediaCount,
+            IgVideoUrl = instagramPostDto.VideoUrl,
+            ShopId = shopId,
+            HasDiscount = false,
+            IsAvailable = true,
+            IsNew = true,
+            IsDeleted = false,
+            IgIsVideo = instagramPostDto.IsVideo,
+            CreateDate = DateTime.UtcNow,
+            Images = instagramPostDto.CarouselMedia.Select(cm => cm.ImageUrl).ToList(),
+            IgDimensions = instagramPostDto.Dimensions,
+            IgCaption = instagramPostDto.Caption,
+            IgLocation = instagramPostDto.Location,
+        };
+
+        await _context.Product.AddAsync(product);
+        await _context.SaveChangesAsync();
+
+        if (product.IgCarouselMediaCount is not null)
+        {
+            var productIgCarouselMediaList = new List<ProductIgCarouselMedia>();
+            byte order = 0;
+            foreach (var media in instagramPostDto.CarouselMedia)
+            {
+                var productIgCarouselMedia = new ProductIgCarouselMedia
+                {
+                    Uuid = Guid.NewGuid(),
+                    IgId = media.Id,
+                    Code = media.Code,
+                    DisplayUrl = media.DisplayUrl,
+                    ImageUrl = media.ImageUrl,
+                    VideoUrl = media.VideoUrl,
+                    Order = order++,
+                    ProductId = product.Id,
+                    IsVideo = media.IsVideo,
+                    Dimensions = media.Dimensions
+                };
+
+                productIgCarouselMediaList.Add(productIgCarouselMedia);
+            }
+
+            await _context.ProductIgCarouselMedia.AddRangeAsync(productIgCarouselMediaList);
+        }
+        else
+        {
+            product.Images = new List<string> { instagramPostDto.DisplayUrl };
+        }
+
+        var productCategories = categoryIds.Select(ci => new ProductCategory
+        {
+            ProductId = product.Id,
+            CategoryId = ci
+        });
+
+        await _context.ProductCategory.AddRangeAsync(productCategories);
+        await _context.SaveChangesAsync();
+
+        return product.Id;
+    }
+
+    public async Task<List<ulong>> CreateIgProducts(List<InstagramPostDto> instagramPostsDto, uint shopId, List<ushort> categoryIds)
+    {
+        var productIds = new List<ulong>();
+        foreach (var instagramPostDto in instagramPostsDto)
+        {
+            var product = new Product
+            {
+                Uuid = Guid.NewGuid(),
+                IgId = instagramPostDto.Id,
+                Name = "",
+                Description = instagramPostDto.Caption?.Text,
+                Price = 0,
+                OriginalPrice = 0,
+                DiscountPercentage = 0,
+                Stock = 0,
+                IgCode = instagramPostDto.Code,
+                IgThumbnailSrc = instagramPostDto.ThumbnailSrc,
+                IgDisplayUrl = instagramPostDto.DisplayUrl,
+                IgLikeCount = instagramPostDto.LikeCount,
+                IgCommentCount = instagramPostDto.CommentCount,
+                IgCarouselMediaCount = instagramPostDto.CarouselMediaCount,
+                IgVideoUrl = instagramPostDto.VideoUrl,
+                ShopId = shopId,
+                HasDiscount = false,
+                IsAvailable = true,
+                IsNew = true,
+                IsDeleted = false,
+                IgIsVideo = instagramPostDto.IsVideo,
+                CreateDate = DateTime.UtcNow,
+                Images = instagramPostDto.CarouselMedia.Select(cm => cm.ImageUrl).ToList(),
+                IgDimensions = instagramPostDto.Dimensions,
+                IgCaption = instagramPostDto.Caption,
+                IgLocation = instagramPostDto.Location,
+            };
+
+            await _context.Product.AddAsync(product);
+            await _context.SaveChangesAsync();
+
+            if (product.IgCarouselMediaCount is not null)
+            {
+                var productIgCarouselMediaList = new List<ProductIgCarouselMedia>();
+                byte order = 0;
+                foreach (var media in instagramPostDto.CarouselMedia)
+                {
+                    var productIgCarouselMedia = new ProductIgCarouselMedia
+                    {
+                        Uuid = Guid.NewGuid(),
+                        IgId = media.Id,
+                        Code = media.Code,
+                        DisplayUrl = media.DisplayUrl,
+                        ImageUrl = media.ImageUrl,
+                        VideoUrl = media.VideoUrl,
+                        Order = order++,
+                        ProductId = product.Id,
+                        IsVideo = media.IsVideo,
+                        Dimensions = media.Dimensions
+                    };
+
+                    productIgCarouselMediaList.Add(productIgCarouselMedia);
+                }
+
+                await _context.ProductIgCarouselMedia.AddRangeAsync(productIgCarouselMediaList);
+            }
+            else
+            {
+                product.Images = new List<string> { instagramPostDto.DisplayUrl };
+            }
+
+            var productCategories = categoryIds.Select(ci => new ProductCategory
+            {
+                ProductId = product.Id,
+                CategoryId = ci
+            });
+
+            await _context.ProductCategory.AddRangeAsync(productCategories);
+            await _context.SaveChangesAsync();
+
+            productIds.Add(product.Id);
+        }
+        
+        return productIds;
     }
 
     public async Task<Product> GetProductById(ulong productId)
@@ -143,7 +292,7 @@ public class ProductRepository : IProductRepository
         product.DiscountPercentage = productUpdateDto.DiscountPercentage ?? product.DiscountPercentage;
         product.Stock = productUpdateDto.Stock ?? product.Stock;
         product.HasDiscount = product.DiscountPercentage > 0;
-        product.IsAvailable = productUpdateDto.IsAvailable ?? product.IsAvailable;
+        product.IsAvailable = product.Stock > 0;
         product.UpdateDate = DateTime.UtcNow;
         product.Images = productUpdateDto.Images ?? product.Images;
 

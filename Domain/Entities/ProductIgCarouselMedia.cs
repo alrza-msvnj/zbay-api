@@ -7,7 +7,7 @@ public class ProductIgCarouselMedia
     public ulong Id { get; set; }
     public Guid Uuid { get; set; }
     public string? IgId { get; set; }
-    public string? ShortCode { get; set; }
+    public string? Code { get; set; }
     public string? DisplayUrl { get; set; }
     public string? ImageUrl { get; set; }
     public string? VideoUrl { get; set; }
