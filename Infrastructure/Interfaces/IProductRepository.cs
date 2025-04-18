@@ -11,6 +11,7 @@ public interface IProductRepository
     Task<ulong> CreateIgProduct(InstagramPostDto instagramPostDto, uint shopId, List<ushort> categoryIds);
     Task<List<ulong>> CreateIgProducts(List<InstagramPostDto> instagramPostsDto, uint shopId, List<ushort> categoryIds);
     Task<Product> GetProductById(ulong productId);
+    Task<Product> GetProductByIgId(string productIgId);
     Task<List<Product>> GetAllProducts(GetAllDto getAllDto);
     Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber, ushort pageSize);
     Task<List<Product>> GetAllProductsByCategoryIds(List<ushort> categoryIds);

@@ -44,39 +44,30 @@ public class ProductController : ControllerBase
         var productIds = new List<ulong>();
         foreach (var username in productCreateIgDto.Usernames)
         {
-            var shop = await _shopRepository.GetShopByIgUsername(username);
-
-            if (shop is not null)
-            {
-                continue;
-            }
-
             var instagramPostsDto = await _instagramScraperService.ScrapePosts(username, 1);
 
             var igId = instagramPostsDto[0].Owner.Id;
-            shop = await _shopRepository.GetShopByIgId(igId);
+            var existedShopByIgId = await _shopRepository.GetShopByIgId(igId);
 
-            if (shop is not null)
+            var shopId = existedShopByIgId?.Id;
+            if (existedShopByIgId is null)
             {
-                continue;
+                var shopCreateDto = new ShopCreateDto
+                {
+                    IgId = instagramPostsDto[0]?.Owner?.Id,
+                    Name = instagramPostsDto[0]?.Owner?.FullName,
+                    Logo = instagramPostsDto[0]?.Owner?.ProfilePictureUrl,
+                    IgUsername = instagramPostsDto[0]?.Owner?.Username,
+                    IgFullName = instagramPostsDto[0]?.Owner?.FullName,
+                    IgFollowers = instagramPostsDto[0]?.Owner?.Followers,
+                    OwnerId = 0,
+                    IsVerified = (bool)(instagramPostsDto[0]?.Owner?.IsVerified)
+                };
+
+                shopId = await _shopRepository.CreateShop(shopCreateDto);
             }
 
-            var shopCreateDto = new ShopCreateDto
-            {
-                IgId = instagramPostsDto[0]?.Owner?.Id,
-                Name = instagramPostsDto[0]?.Owner?.FullName,
-                Logo = instagramPostsDto[0]?.Owner?.ProfilePictureUrl,
-                IgUsername = instagramPostsDto[0]?.Owner?.Username,
-                IgFullName = instagramPostsDto[0]?.Owner?.FullName,
-                IgFollowers = instagramPostsDto[0]?.Owner?.Followers,
-                OwnerId = 0,
-                IsVerified = (bool)(instagramPostsDto[0]?.Owner?.IsVerified)
-            };
-
-            var shopId = await _shopRepository.CreateShop(shopCreateDto);
-            shop = await _shopRepository.GetShopById(shopId);
-
-            productIds.AddRange(await _productRepository.CreateIgProducts(instagramPostsDto, shop.Id, productCreateIgDto.CategoryIds));
+            productIds.AddRange(await _productRepository.CreateIgProducts(instagramPostsDto, shopId.Value, productCreateIgDto.CategoryIds));
         }
 
         return Ok(productIds);

@@ -140,6 +140,13 @@ public class ProductRepository : IProductRepository
         var productIds = new List<ulong>();
         foreach (var instagramPostDto in instagramPostsDto)
         {
+            var existedProduct = await GetProductByIgId(instagramPostDto.Id);
+
+            if (existedProduct is not null)
+            {
+                continue;
+            }
+
             var product = new Product
             {
                 Uuid = Guid.NewGuid(),
@@ -221,6 +228,11 @@ public class ProductRepository : IProductRepository
     public async Task<Product> GetProductById(ulong productId)
     {
         return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).Include(p => p.Shop).FirstOrDefaultAsync();
+    }
+
+    public async Task<Product> GetProductByIgId(string productIgId)
+    {
+        return await _context.Product.FirstOrDefaultAsync(p => p.IgId == productIgId);
     }
 
     public async Task<List<Product>> GetAllProducts(GetAllDto getAllDto)
