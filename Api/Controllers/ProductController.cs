@@ -77,9 +77,6 @@ public class ProductController : ControllerBase
             shop = await _shopRepository.GetShopById(shopId);
 
             productIds.AddRange(await _productRepository.CreateIgProducts(instagramPostsDto, shop.Id, productCreateIgDto.CategoryIds));
-
-            var randomDelay = new Random().Next(30000, 60000);
-            await Task.Delay(randomDelay);
         }
 
         return Ok(productIds);

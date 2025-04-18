@@ -110,7 +110,7 @@ public class InstagramScraperService : IInstagramScraperService
         }
 
         var result = await response.Content.ReadAsStringAsync();
-        var instagramPostDto = InstagramFactory.MapInstagramPostToInstagramPostDto(result);
+        var instagramPostDto = InstagramScraperFactory.MapToInstagramPostDto(result);
 
         return instagramPostDto;
     }
@@ -124,7 +124,7 @@ public class InstagramScraperService : IInstagramScraperService
         {
             var variables = new Dictionary<string, object?>
             {
-                { "after", null },
+                { "after", endCursor },
                 { "before", null },
                 { "data", new Dictionary<string, object>
                 {
@@ -165,9 +165,37 @@ public class InstagramScraperService : IInstagramScraperService
             }
 
             var result = await response.Content.ReadAsStringAsync();
-            var instagramPostsDto = InstagramFactory.MapInstagramPostsToInstagramPostsDto(result);
+            var parsedData = JsonConvert.DeserializeObject<dynamic>(result);
+            var pageInfo = parsedData?["data"]?["xdt_api__v1__feed__user_timeline_graphql_connection"]?["page_info"];
 
-            return instagramPostsDto;
+            if (pageInfo is null)
+            {
+                throw new Exception("No page info found.");
+            }
+
+            if (currentPage == pageNumber)
+            {
+                return InstagramScraperFactory.MapToInstagramPostsDto(parsedData);
+            }
+
+            var hasNextPage = bool.Parse(pageInfo["has_next_page"]?.ToString());
+            string newCursor = pageInfo["end_cursor"]?.ToString();
+
+            if (!hasNextPage || newCursor == endCursor)
+            {
+                throw new Exception("No more data found.");
+            }
+
+            endCursor = newCursor;
+            currentPage++;
+
+            if (currentPage > pageNumber)
+            {
+                throw new Exception("Could not find the specified page.");
+            }
+
+            var randomDelay = new Random().Next(30000, 60000);
+            await Task.Delay(randomDelay);
         }
     }
 

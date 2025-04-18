@@ -4,9 +4,9 @@ using static Infrastructure.Dtos.InstagramDto;
 
 namespace Api.Factories;
 
-public static class InstagramFactory
+public static class InstagramScraperFactory
 {
-    public static InstagramPostDto MapInstagramPostToInstagramPostDto(string data)
+    public static InstagramPostDto MapToInstagramPostDto(string data)
     {
         var parsedData = JsonConvert.DeserializeObject<dynamic>(data);
 
@@ -86,11 +86,9 @@ public static class InstagramFactory
         return instagramPost;
     }
 
-    public static List<InstagramPostDto> MapInstagramPostsToInstagramPostsDto(string data)
+    public static List<InstagramPostDto> MapToInstagramPostsDto(dynamic parsedData)
     {
-        var parsedData = JsonConvert.DeserializeObject<dynamic>(data);
-        var a = JsonConvert.SerializeObject(parsedData, Formatting.Indented);
-        var instagramPosts = parsedData?["data"]?["xdt_api__v1__feed__user_timeline_graphql_connection"]["edges"]?.ToObject<List<object>>();
+        var instagramPosts = parsedData?["data"]?["xdt_api__v1__feed__user_timeline_graphql_connection"]?["edges"]?.ToObject<List<object>>();
 
         if (instagramPosts is null)
         {
