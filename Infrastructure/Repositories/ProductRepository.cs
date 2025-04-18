@@ -171,7 +171,7 @@ public class ProductRepository : IProductRepository
                 IsDeleted = false,
                 IgIsVideo = instagramPostDto.IsVideo,
                 CreateDate = DateTime.UtcNow,
-                Images = instagramPostDto.CarouselMedia.Select(cm => cm.ImageUrl).ToList(),
+                Images = instagramPostDto.CarouselMedia is not null ? instagramPostDto.CarouselMedia.Select(cm => cm.ImageUrl).ToList() : new List<string> { instagramPostDto.DisplayUrl },
                 IgDimensions = instagramPostDto.Dimensions,
                 IgCaption = instagramPostDto.Caption,
                 IgLocation = instagramPostDto.Location,
@@ -204,10 +204,6 @@ public class ProductRepository : IProductRepository
                 }
 
                 await _context.ProductIgCarouselMedia.AddRangeAsync(productIgCarouselMediaList);
-            }
-            else
-            {
-                product.Images = new List<string> { instagramPostDto.DisplayUrl };
             }
 
             var productCategories = categoryIds.Select(ci => new ProductCategory

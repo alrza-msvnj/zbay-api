@@ -14,7 +14,7 @@ public class Shop
     public string? IgUsername { get; set; }
     public string? IgFullName { get; set; }
     public uint? IgFollowers { get; set; }
-    public uint OwnerId { get; set; }
+    public uint? OwnerId { get; set; }
     public bool IsVerified { get; set; }
     public bool IsValidated { get; set; }
     public bool IsDeleted { get; set; }

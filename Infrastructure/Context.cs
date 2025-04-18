@@ -37,6 +37,9 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
+            e.HasIndex(e => e.IgId)
+            .IsUnique();
+
             e.HasIndex(e => e.IgUsername)
             .IsUnique();
 
@@ -56,6 +59,9 @@ public class Context : DbContext
         modelBuilder.Entity<Product>(e =>
         {
             e.HasKey(e => e.Id);
+
+            e.HasIndex(e => e.IgId)
+            .IsUnique();
 
             e.HasIndex(e => e.IgCode)
             .IsUnique();

@@ -60,7 +60,6 @@ public class ProductController : ControllerBase
                     IgUsername = instagramPostsDto[0]?.Owner?.Username,
                     IgFullName = instagramPostsDto[0]?.Owner?.FullName,
                     IgFollowers = instagramPostsDto[0]?.Owner?.Followers,
-                    OwnerId = 0,
                     IsVerified = (bool)(instagramPostsDto[0]?.Owner?.IsVerified)
                 };
 

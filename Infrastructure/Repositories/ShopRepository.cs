@@ -27,11 +27,14 @@ public class ShopRepository : IShopRepository
 
     public async Task<uint> CreateShop(ShopCreateDto shopCreateDto)
     {
-        var owner = await _userRepository.GetUserById(shopCreateDto.OwnerId);
-
-        if (owner is null)
+        if (shopCreateDto.OwnerId is not null)
         {
-            throw new InvalidOperationException("Owner does not exist.");
+            var owner = await _userRepository.GetUserById(shopCreateDto.OwnerId.Value);
+
+            if (owner is null)
+            {
+                throw new InvalidOperationException("Owner does not exist.");
+            }
         }
 
         var shop = new Shop
@@ -54,12 +57,15 @@ public class ShopRepository : IShopRepository
         await _context.AddAsync(shop);
         await _context.SaveChangesAsync();
 
-        var user = await _userRepository.GetUserById(shopCreateDto.OwnerId);
+        if (shopCreateDto.OwnerId is not null)
+        {
+            var user = await _userRepository.GetUserById(shopCreateDto.OwnerId.Value);
 
-        user.ShopId = shop.Id;
-        user.Role = UserRole.ShopOwner;
+            user.ShopId = shop.Id;
+            user.Role = UserRole.ShopOwner;
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        }
 
         return shop.Id;
     }
