@@ -13,6 +13,7 @@ public class ProductRepository : IProductRepository
     #region Initialization
 
     private readonly Context _context;
+    private const string ImagePath = @"F:\Z Market\Front\zmarket-front\public\images\";
 
     public ProductRepository(Context context)
     {
@@ -177,6 +178,38 @@ public class ProductRepository : IProductRepository
                 IgLocation = instagramPostDto.Location,
             };
 
+            var images = new List<string>();
+            foreach (var image in product.Images)
+            {
+                var imageName = Guid.NewGuid().ToString() + ".png";
+                var imagePath = $@"{ImagePath}\{imageName}";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        using (HttpResponseMessage response = await client.GetAsync(image))
+                        {
+                            response.EnsureSuccessStatusCode();
+
+                            byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+
+                            await File.WriteAllBytesAsync(imagePath, imageBytes);
+
+                            images.Add(imageName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error downloading image: {ex.Message}");
+                    }
+                }
+
+                var randomDelay = new Random().Next(500, 3000);
+                await Task.Delay(randomDelay);
+            }
+
+            product.Images = images;
+
             await _context.Product.AddAsync(product);
             await _context.SaveChangesAsync();
 
@@ -217,7 +250,7 @@ public class ProductRepository : IProductRepository
 
             productIds.Add(product.Id);
         }
-        
+
         return productIds;
     }
 

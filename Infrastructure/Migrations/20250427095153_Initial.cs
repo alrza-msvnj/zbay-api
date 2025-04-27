@@ -62,7 +62,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IgId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IgId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -70,7 +70,7 @@ namespace Infrastructure.Migrations
                     IgUsername = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     IgFullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IgFollowers = table.Column<long>(type: "bigint", nullable: true),
-                    OwnerId = table.Column<long>(type: "bigint", nullable: false),
+                    OwnerId = table.Column<long>(type: "bigint", nullable: true),
                     IsVerified = table.Column<bool>(type: "bit", nullable: false),
                     IsValidated = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -83,8 +83,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Shop_User_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -94,7 +93,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<decimal>(type: "decimal(20,0)", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IgId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IgId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -195,7 +194,7 @@ namespace Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IgId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShortCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DisplayUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VideoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -235,6 +234,13 @@ namespace Infrastructure.Migrations
                 filter: "[IgCode] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Product_IgId",
+                table: "Product",
+                column: "IgId",
+                unique: true,
+                filter: "[IgId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Product_ShopId",
                 table: "Product",
                 column: "ShopId");
@@ -250,6 +256,13 @@ namespace Infrastructure.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Shop_IgId",
+                table: "Shop",
+                column: "IgId",
+                unique: true,
+                filter: "[IgId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shop_IgUsername",
                 table: "Shop",
                 column: "IgUsername",
@@ -260,7 +273,8 @@ namespace Infrastructure.Migrations
                 name: "IX_Shop_OwnerId",
                 table: "Shop",
                 column: "OwnerId",
-                unique: true);
+                unique: true,
+                filter: "[OwnerId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShopCategory_CategoryId",

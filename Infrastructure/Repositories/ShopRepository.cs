@@ -14,6 +14,7 @@ public class ShopRepository : IShopRepository
 
     private readonly Context _context;
     private readonly IUserRepository _userRepository;
+    private const string LogoPath = @"F:\Z Market\Front\zmarket-front\public\logos\";
 
     public ShopRepository(Context context, IUserRepository userRepository)
     {
@@ -53,6 +54,29 @@ public class ShopRepository : IShopRepository
             IsDeleted = false,
             JoinDate = DateTime.UtcNow
         };
+
+        var logoName = Guid.NewGuid().ToString() + ".png";
+        var imagePath = $@"{LogoPath}\{logoName}";
+        using (HttpClient client = new HttpClient())
+        {
+            try
+            {
+                using (HttpResponseMessage response = await client.GetAsync(shop.Logo))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+
+                    await File.WriteAllBytesAsync(imagePath, imageBytes);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error downloading image: {ex.Message}");
+            }
+        }
+
+        shop.Logo = logoName;
 
         await _context.AddAsync(shop);
         await _context.SaveChangesAsync();

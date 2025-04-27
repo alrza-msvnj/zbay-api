@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250417072126_Initial")]
+    [Migration("20250427095153_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -83,7 +83,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IgId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("IgIsVideo")
                         .HasColumnType("bit");
@@ -138,6 +138,10 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IgCode] IS NOT NULL");
 
+                    b.HasIndex("IgId")
+                        .IsUnique()
+                        .HasFilter("[IgId] IS NOT NULL");
+
                     b.HasIndex("ShopId");
 
                     b.ToTable("Product");
@@ -166,6 +170,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
 
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DisplayUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -183,9 +190,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("ProductId")
                         .HasColumnType("decimal(20,0)");
-
-                    b.Property<string>("ShortCode")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("Uuid")
                         .HasColumnType("uniqueidentifier");
@@ -218,7 +222,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IgId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("IgUsername")
                         .HasColumnType("nvarchar(450)");
@@ -242,7 +246,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("OwnerId")
+                    b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("TotalProducts")
@@ -253,12 +257,17 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IgId")
+                        .IsUnique()
+                        .HasFilter("[IgId] IS NOT NULL");
+
                     b.HasIndex("IgUsername")
                         .IsUnique()
                         .HasFilter("[IgUsername] IS NOT NULL");
 
                     b.HasIndex("OwnerId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[OwnerId] IS NOT NULL");
 
                     b.ToTable("Shop");
                 });
@@ -486,9 +495,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.User", "Owner")
                         .WithOne("Shop")
-                        .HasForeignKey("Domain.Entities.Shop", "OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Domain.Entities.Shop", "OwnerId");
 
                     b.Navigation("Owner");
                 });

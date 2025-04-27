@@ -22,7 +22,12 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<ushort> CreateCategory(CategoryCreateDto categoryCreateDto)
     {
-        if (categoryCreateDto.ParentId is not null)
+        var category = new Category
+        {
+            Title = categoryCreateDto.Title
+        };
+
+        if (categoryCreateDto.ParentId is not null && categoryCreateDto.ParentId > 0)
         {
             var parent = await GetCategoryById(categoryCreateDto.ParentId.Value);
 
@@ -30,13 +35,9 @@ public class CategoryRepository : ICategoryRepository
             {
                 throw new InvalidOperationException("Parent category does not exist.");
             }
-        }
 
-        var category = new Category
-        {
-            Title = categoryCreateDto.Title,
-            ParentId = categoryCreateDto.ParentId
-        };
+            category.ParentId = parent.Id;
+        }
 
         await _context.Category.AddAsync(category);
         await _context.SaveChangesAsync();
