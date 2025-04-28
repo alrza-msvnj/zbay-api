@@ -13,7 +13,7 @@ public class ProductRepository : IProductRepository
     #region Initialization
 
     private readonly Context _context;
-    private const string ImagePath = @"F:\Z Market\Front\zmarket-front\public\images\";
+    private const string ImagePath = @"G:\Projects\Z Market\src\Front\zmarket-front\public\images\";
 
     public ProductRepository(Context context)
     {
@@ -172,7 +172,7 @@ public class ProductRepository : IProductRepository
                 IsDeleted = false,
                 IgIsVideo = instagramPostDto.IsVideo,
                 CreateDate = DateTime.UtcNow,
-                Images = instagramPostDto.CarouselMedia is not null ? instagramPostDto.CarouselMedia.Select(cm => cm.ImageUrl).ToList() : new List<string> { instagramPostDto.DisplayUrl },
+                Images = instagramPostDto.CarouselMedia is not null ? instagramPostDto.CarouselMedia.Select(cm => cm.DisplayUrl).ToList() : new List<string> { instagramPostDto.DisplayUrl },
                 IgDimensions = instagramPostDto.Dimensions,
                 IgCaption = instagramPostDto.Caption,
                 IgLocation = instagramPostDto.Location,

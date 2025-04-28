@@ -14,7 +14,7 @@ public class ShopRepository : IShopRepository
 
     private readonly Context _context;
     private readonly IUserRepository _userRepository;
-    private const string LogoPath = @"F:\Z Market\Front\zmarket-front\public\logos\";
+    private const string LogoPath = @"G:\Projects\Z Market\src\Front\zmarket-front\public\logos\";
 
     public ShopRepository(Context context, IUserRepository userRepository)
     {
