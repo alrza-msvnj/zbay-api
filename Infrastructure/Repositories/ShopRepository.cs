@@ -4,7 +4,6 @@ using Domain.Enums;
 using Infrastructure.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.Dtos.SharedDto;
 using static Infrastructure.Dtos.ShopDto;
 
@@ -119,7 +118,7 @@ public class ShopRepository : IShopRepository
 
     public async Task<List<Shop>> GetAllShops(GetAllDto getAllDto)
     {
-        if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
+        if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.Count == 0)
         {
             var query = _context.Shop.Where(s => !s.IsDeleted && s.IsValidated && s.Name.Contains(getAllDto.SearchTerm));
 

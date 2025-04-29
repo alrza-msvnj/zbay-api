@@ -3,7 +3,6 @@ using Infrastructure.Dtos;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.Dtos.InstagramDto;
 using static Infrastructure.Dtos.ProductDto;
 using static Infrastructure.Dtos.SharedDto;
@@ -269,7 +268,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<List<Product>> GetAllProducts(GetAllDto getAllDto)
     {
-        if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.IsNullOrEmpty())
+        if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.Count == 0)
         {
             var query = _context.Product.Where(p => !p.IsDeleted && p.Name.Contains(getAllDto.SearchTerm));
 
