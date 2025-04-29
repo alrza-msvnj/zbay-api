@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
+using Infrastructure.Dtos;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.Dtos.InstagramDto;
 using static Infrastructure.Dtos.ProductDto;
@@ -13,11 +15,12 @@ public class ProductRepository : IProductRepository
     #region Initialization
 
     private readonly Context _context;
-    private const string ImagePath = @"G:\Projects\Z Market\src\Front\zmarket-front\public\images\";
+    private readonly InstagramApiKeys _instagramApiKeys;
 
-    public ProductRepository(Context context)
+    public ProductRepository(Context context, IOptions<InstagramApiKeys> instagramApiKeys)
     {
         _context = context;
+        _instagramApiKeys = instagramApiKeys.Value;
     }
 
     #endregion
@@ -182,7 +185,7 @@ public class ProductRepository : IProductRepository
             foreach (var image in product.Images)
             {
                 var imageName = Guid.NewGuid().ToString() + ".png";
-                var imagePath = $@"{ImagePath}\{imageName}";
+                var imagePath = $@"{_instagramApiKeys.IgImagesDirectory}\{imageName}";
                 using (HttpClient client = new HttpClient())
                 {
                     try

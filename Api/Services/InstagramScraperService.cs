@@ -1,5 +1,6 @@
 ﻿using Api.Factories;
 using Infrastructure.Dtos;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
@@ -15,14 +16,12 @@ public class InstagramScraperService : IInstagramScraperService
         Timeout = TimeSpan.FromSeconds(20)
     };
     private const string InstagramApiBaseUrl = "https://www.instagram.com/graphql/query";
-    private readonly string InstagramDocumentId;
-    private readonly string InstagramAccountDocumentId;
+    private readonly InstagramApiKeys _instagramApiKeys;
     private readonly List<string> userAgentList;
 
-    public InstagramScraperService(IConfiguration configuration)
+    public InstagramScraperService(IOptions<InstagramApiKeys> instagramApiKeys)
     {
-        InstagramDocumentId = configuration.GetValue<string>("InstagramApi:InstagramDocumentId");
-        InstagramAccountDocumentId = configuration.GetValue<string>("InstagramApi:InstagramAccountDocumentId");
+        _instagramApiKeys = instagramApiKeys.Value;
         userAgentList = new()
         {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -91,7 +90,7 @@ public class InstagramScraperService : IInstagramScraperService
             NullValueHandling = NullValueHandling.Include
         });
         var encodedVariables = WebUtility.UrlEncode(jsonVariables);
-        var body = $"variables={encodedVariables}&doc_id={InstagramDocumentId}";
+        var body = $"variables={encodedVariables}&doc_id={_instagramApiKeys.InstagramDocumentId}";
 
         var request = new HttpRequestMessage(HttpMethod.Post, InstagramApiBaseUrl);
         request.Content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
@@ -146,7 +145,7 @@ public class InstagramScraperService : IInstagramScraperService
                 NullValueHandling = NullValueHandling.Include
             });
             var encodedVariables = WebUtility.UrlEncode(jsonVariables);
-            var body = $"variables={encodedVariables}&doc_id={InstagramAccountDocumentId}";
+            var body = $"variables={encodedVariables}&doc_id={_instagramApiKeys.InstagramAccountDocumentId}";
 
             var request = new HttpRequestMessage(HttpMethod.Post, InstagramApiBaseUrl);
             request.Content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");

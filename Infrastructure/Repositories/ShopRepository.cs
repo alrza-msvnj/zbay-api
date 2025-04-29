@@ -1,7 +1,9 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enums;
+using Infrastructure.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.Dtos.SharedDto;
 using static Infrastructure.Dtos.ShopDto;
@@ -14,12 +16,13 @@ public class ShopRepository : IShopRepository
 
     private readonly Context _context;
     private readonly IUserRepository _userRepository;
-    private const string LogoPath = @"G:\Projects\Z Market\src\Front\zmarket-front\public\logos\";
+    private readonly InstagramApiKeys _instagramApiKeys;
 
-    public ShopRepository(Context context, IUserRepository userRepository)
+    public ShopRepository(Context context, IUserRepository userRepository, IOptions<InstagramApiKeys> instagramApiKeys)
     {
         _context = context;
         _userRepository = userRepository;
+        _instagramApiKeys = instagramApiKeys.Value;
     }
 
     #endregion
@@ -56,7 +59,7 @@ public class ShopRepository : IShopRepository
         };
 
         var logoName = Guid.NewGuid().ToString() + ".png";
-        var imagePath = $@"{LogoPath}\{logoName}";
+        var imagePath = $@"{_instagramApiKeys.IgLogosDirectory}\{logoName}";
         using (HttpClient client = new HttpClient())
         {
             try
