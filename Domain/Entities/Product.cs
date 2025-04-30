@@ -4,7 +4,7 @@ namespace Domain.Entities;
 
 public class Product
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
     public Guid Uuid { get; set; }
     public string? IgId { get; set; }
     public required string Name { get; set; }

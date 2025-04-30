@@ -4,7 +4,7 @@ namespace Domain.Entities;
 
 public class ProductCategory
 {
-    public ulong ProductId { get; set; }
+    public long ProductId { get; set; }
     public ushort CategoryId { get; set; }
 
     [JsonIgnore]

@@ -7,15 +7,15 @@ namespace Infrastructure.Interfaces;
 
 public interface IProductRepository
 {
-    Task<ulong> CreateProduct(ProductCreateDto productCreateDto);
-    Task<ulong> CreateIgProduct(InstagramPostDto instagramPostDto, uint shopId, List<ushort> categoryIds);
-    Task<List<ulong>> CreateIgProducts(List<InstagramPostDto> instagramPostsDto, uint shopId, List<ushort> categoryIds);
-    Task<Product> GetProductById(ulong productId);
+    Task<long> CreateProduct(ProductCreateDto productCreateDto);
+    Task<long> CreateIgProduct(InstagramPostDto instagramPostDto, uint shopId, List<ushort> categoryIds);
+    Task<List<long>> CreateIgProducts(List<InstagramPostDto> instagramPostsDto, uint shopId, List<ushort> categoryIds);
+    Task<Product> GetProductById(long productId);
     Task<Product> GetProductByIgId(string productIgId);
     Task<List<Product>> GetAllProducts(GetAllDto getAllDto);
     Task<List<Product>> GetAllProductsByShopId(uint shopId, ushort pageNumber, ushort pageSize);
     Task<List<Product>> GetAllProductsByCategoryIds(List<ushort> categoryIds);
     Task<List<Product>> GetAllAvailableProducts();
-    Task<ulong> UpdateProduct(ProductUpdateDto productUpdateDto);
-    Task<ulong> DeleteProduct(ulong productId);
+    Task<long> UpdateProduct(ProductUpdateDto productUpdateDto);
+    Task<long> DeleteProduct(long productId);
 }

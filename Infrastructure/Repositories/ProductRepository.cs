@@ -26,7 +26,7 @@ public class ProductRepository : IProductRepository
 
     #region Methods
 
-    public async Task<ulong> CreateProduct(ProductCreateDto productCreateDto)
+    public async Task<long> CreateProduct(ProductCreateDto productCreateDto)
     {
         var product = new Product
         {
@@ -61,7 +61,7 @@ public class ProductRepository : IProductRepository
         return product.Id;
     }
 
-    public async Task<ulong> CreateIgProduct(InstagramPostDto instagramPostDto, uint shopId, List<ushort> categoryIds)
+    public async Task<long> CreateIgProduct(InstagramPostDto instagramPostDto, uint shopId, List<ushort> categoryIds)
     {
         var product = new Product
         {
@@ -138,9 +138,9 @@ public class ProductRepository : IProductRepository
         return product.Id;
     }
 
-    public async Task<List<ulong>> CreateIgProducts(List<InstagramPostDto> instagramPostsDto, uint shopId, List<ushort> categoryIds)
+    public async Task<List<long>> CreateIgProducts(List<InstagramPostDto> instagramPostsDto, uint shopId, List<ushort> categoryIds)
     {
-        var productIds = new List<ulong>();
+        var productIds = new List<long>();
         foreach (var instagramPostDto in instagramPostsDto)
         {
             var existedProduct = await GetProductByIgId(instagramPostDto.Id);
@@ -256,7 +256,7 @@ public class ProductRepository : IProductRepository
         return productIds;
     }
 
-    public async Task<Product> GetProductById(ulong productId)
+    public async Task<Product> GetProductById(long productId)
     {
         return await _context.Product.Where(p => p.Id == productId).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).Include(p => p.Shop).FirstOrDefaultAsync();
     }
@@ -319,7 +319,7 @@ public class ProductRepository : IProductRepository
         return await _context.Product.Where(p => !p.IsDeleted && p.IsAvailable).Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
-    public async Task<ulong> UpdateProduct(ProductUpdateDto productUpdateDto)
+    public async Task<long> UpdateProduct(ProductUpdateDto productUpdateDto)
     {
         var product = await GetProductById(productUpdateDto.Id);
 
@@ -344,7 +344,7 @@ public class ProductRepository : IProductRepository
         return product.Id;
     }
 
-    public async Task<ulong> DeleteProduct(ulong productId)
+    public async Task<long> DeleteProduct(long productId)
     {
         var product = await GetProductById(productId);
 

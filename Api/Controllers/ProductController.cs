@@ -41,7 +41,7 @@ public class ProductController : ControllerBase
     [HttpPost(nameof(CreateIgProducts))]
     public async Task<IActionResult> CreateIgProducts(ProductCreateIgDto productCreateIgDto)
     {
-        var productIds = new List<ulong>();
+        var productIds = new List<long>();
         foreach (var username in productCreateIgDto.Usernames)
         {
             var instagramPostsDto = await _instagramScraperService.ScrapePosts(username, 1);
@@ -73,7 +73,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet($"{nameof(GetProductById)}/{{productId}}")]
-    public async Task<IActionResult> GetProductById(ulong productId)
+    public async Task<IActionResult> GetProductById(long productId)
     {
         var product = await _productRepository.GetProductById(productId);
 
@@ -155,7 +155,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete($"{nameof(DeleteProduct)}/{{productId}}")]
-    public async Task<IActionResult> DeleteProduct(ulong productId)
+    public async Task<IActionResult> DeleteProduct(long productId)
     {
         await _productRepository.DeleteProduct(productId);
 

@@ -6,7 +6,7 @@ public class ProductDto
 {
     public class ProductResponseDto
     {
-        public ulong Id { get; set; }
+        public long Id { get; set; }
         public Guid Uuid { get; set; }
         public string? IgId { get; set; }
         public required string Name { get; set; }
@@ -61,7 +61,7 @@ public class ProductDto
     public class ProductUpdateDto
     {
         // TODO
-        public ulong Id { get; set; }
+        public long Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }

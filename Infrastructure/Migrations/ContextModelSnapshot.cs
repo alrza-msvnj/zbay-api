@@ -50,12 +50,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("numeric(20,0)");
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -123,7 +125,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("Uuid")
                         .HasColumnType("uuid");
@@ -143,8 +145,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
                 {
-                    b.Property<decimal>("ProductId")
-                        .HasColumnType("numeric(20,0)");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -158,9 +160,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductIgCarouselMedia", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("numeric(20,0)");
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
                         .HasColumnType("text");
@@ -180,8 +184,8 @@ namespace Infrastructure.Migrations
                     b.Property<byte>("Order")
                         .HasColumnType("smallint");
 
-                    b.Property<decimal>("ProductId")
-                        .HasColumnType("numeric(20,0)");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("Uuid")
                         .HasColumnType("uuid");
@@ -229,7 +233,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("JoinDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Logo")
                         .HasColumnType("text");
@@ -288,7 +292,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -351,11 +355,11 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.Entities.Caption", "IgCaption", b1 =>
                         {
-                            b1.Property<decimal>("ProductId")
-                                .HasColumnType("numeric(20,0)");
+                            b1.Property<long>("ProductId")
+                                .HasColumnType("bigint");
 
                             b1.Property<DateTime?>("CreatedDate")
-                                .HasColumnType("timestamp with time zone");
+                                .HasColumnType("timestamp without time zone");
 
                             b1.Property<string>("Id")
                                 .HasColumnType("text");
@@ -373,8 +377,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.Entities.Location", "IgLocation", b1 =>
                         {
-                            b1.Property<decimal>("ProductId")
-                                .HasColumnType("numeric(20,0)");
+                            b1.Property<long>("ProductId")
+                                .HasColumnType("bigint");
 
                             b1.Property<string>("AddressJson")
                                 .HasColumnType("text");
@@ -401,8 +405,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.Entities.Dimensions", "IgDimensions", b1 =>
                         {
-                            b1.Property<decimal>("ProductId")
-                                .HasColumnType("numeric(20,0)");
+                            b1.Property<long>("ProductId")
+                                .HasColumnType("bigint");
 
                             b1.Property<int?>("Hieght")
                                 .HasColumnType("integer");
@@ -456,8 +460,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.Entities.Dimensions", "Dimensions", b1 =>
                         {
-                            b1.Property<decimal>("ProductIgCarouselMediaId")
-                                .HasColumnType("numeric(20,0)");
+                            b1.Property<long>("ProductIgCarouselMediaId")
+                                .HasColumnType("bigint");
 
                             b1.Property<int?>("Hieght")
                                 .HasColumnType("integer");

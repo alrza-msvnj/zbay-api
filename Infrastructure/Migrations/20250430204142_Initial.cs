@@ -50,7 +50,7 @@ namespace Infrastructure.Migrations
                     ShopId = table.Column<long>(type: "bigint", nullable: true),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,7 +76,7 @@ namespace Infrastructure.Migrations
                     IsVerified = table.Column<bool>(type: "boolean", nullable: false),
                     IsValidated = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    JoinDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    JoinDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,7 +92,8 @@ namespace Infrastructure.Migrations
                 name: "Product",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Uuid = table.Column<Guid>(type: "uuid", nullable: false),
                     IgId = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: false),
@@ -114,14 +115,14 @@ namespace Infrastructure.Migrations
                     IsNew = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     IgIsVideo = table.Column<bool>(type: "boolean", nullable: true),
-                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Images = table.Column<List<string>>(type: "text[]", nullable: false),
                     IgDimensions_Hieght = table.Column<int>(type: "integer", nullable: true),
                     IgDimensions_Width = table.Column<int>(type: "integer", nullable: true),
                     IgCaption_Id = table.Column<string>(type: "text", nullable: true),
                     IgCaption_Text = table.Column<string>(type: "text", nullable: true),
-                    IgCaption_CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IgCaption_CreatedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     IgLocation_Id = table.Column<string>(type: "text", nullable: true),
                     IgLocation_Lat = table.Column<double>(type: "double precision", nullable: true),
                     IgLocation_Lng = table.Column<double>(type: "double precision", nullable: true),
@@ -167,7 +168,7 @@ namespace Infrastructure.Migrations
                 name: "ProductCategory",
                 columns: table => new
                 {
-                    ProductId = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -191,7 +192,8 @@ namespace Infrastructure.Migrations
                 name: "ProductIgCarouselMedia",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Uuid = table.Column<Guid>(type: "uuid", nullable: false),
                     IgId = table.Column<string>(type: "text", nullable: true),
                     Code = table.Column<string>(type: "text", nullable: true),
@@ -199,7 +201,7 @@ namespace Infrastructure.Migrations
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
                     VideoUrl = table.Column<string>(type: "text", nullable: true),
                     Order = table.Column<byte>(type: "smallint", nullable: false),
-                    ProductId = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
                     IsVideo = table.Column<bool>(type: "boolean", nullable: true),
                     Dimensions_Hieght = table.Column<int>(type: "integer", nullable: true),
                     Dimensions_Width = table.Column<int>(type: "integer", nullable: true)
