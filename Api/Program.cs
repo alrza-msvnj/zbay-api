@@ -92,26 +92,36 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowReactApp",
+//        policy => policy.WithOrigins(
+//                "http://localhost:8080",
+//                "http://82.115.21.99"
+//            )
+//            .AllowAnyMethod()
+//            .AllowAnyHeader()
+//            .AllowCredentials());
+//});
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy => policy.WithOrigins(
-                "http://localhost:8080",
-                "http://82.115.21.99"
-            )
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+            .AllowAnyHeader());
+            //.AllowCredentials());
 });
 
 var app = builder.Build();
 
-app.UseCors("AllowReactApp");
+//app.UseCors("AllowReactApp");
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
+app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.DocExpansion(DocExpansion.None);
