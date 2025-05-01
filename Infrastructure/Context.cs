@@ -21,6 +21,9 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
+            e.Property(u => u.Id)
+            .ValueGeneratedOnAdd();
+
             e.HasIndex(e => e.Email)
             .IsUnique();
 
@@ -35,6 +38,9 @@ public class Context : DbContext
         modelBuilder.Entity<Shop>(e =>
         {
             e.HasKey(e => e.Id);
+
+            e.Property(u => u.Id)
+            .ValueGeneratedOnAdd();
 
             e.HasIndex(e => e.IgId)
             .IsUnique();
@@ -59,6 +65,9 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
+            e.Property(u => u.Id)
+            .ValueGeneratedOnAdd();
+
             e.HasIndex(e => e.IgId)
             .IsUnique();
 
@@ -82,6 +91,9 @@ public class Context : DbContext
         {
             e.HasKey(e => e.Id);
 
+            e.Property(u => u.Id)
+            .ValueGeneratedOnAdd();
+
             e.HasOne(picm => picm.Product)
             .WithMany(p => p.ProductIgCarouselMedia)
             .HasForeignKey(picm => picm.ProductId);
@@ -92,6 +104,9 @@ public class Context : DbContext
         modelBuilder.Entity<Category>(e =>
         {
             e.HasKey(e => e.Id);
+
+            e.Property(u => u.Id)
+            .ValueGeneratedOnAdd();
 
             e.HasIndex(e => e.Title)
             .IsUnique();

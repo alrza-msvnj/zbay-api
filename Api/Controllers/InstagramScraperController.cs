@@ -31,9 +31,16 @@ public class InstagramScraperController : ControllerBase
     [HttpPost(nameof(ScrapePosts))]
     public async Task<IActionResult> ScrapePosts([FromBody] string username, byte pageNumber, byte pageSize = 12)
     {
-        var instagramPostsDto = await _instagramScraperService.ScrapePosts(username, pageNumber, pageSize);
+        try
+        {
+            var instagramPostsDto = await _instagramScraperService.ScrapePosts(username, pageNumber, pageSize);
 
-        return Ok(instagramPostsDto);
+            return Ok(instagramPostsDto);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Exception: {ex.Message}");
+        }
     }
 
     #endregion

@@ -56,9 +56,9 @@ public class UserRepository : IUserRepository
     {
         var user = await GetUserByPhoneNumber(userRegisterDto.PhoneNumber);
 
-        if (user is null)
+        if (user is not null)
         {
-            throw new InvalidOperationException("User does not exist.");
+            throw new InvalidOperationException("User already exists.");
         }
 
         user.FirstName = userRegisterDto.FirstName;

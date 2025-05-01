@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
+using static Infrastructure.Dtos.InstagramDto;
 
 namespace Api.Services;
 
@@ -66,7 +67,7 @@ public class InstagramScraperService : IInstagramScraperService
 
     #region Methods
 
-    public async Task<InstagramDto.InstagramPostDto> ScrapePost(string postUrlOrPostCode)
+    public async Task<InstagramPostDto> ScrapePost(string postUrlOrPostCode)
     {
         string postShortCode;
         if (postUrlOrPostCode.Contains("http"))
@@ -114,7 +115,7 @@ public class InstagramScraperService : IInstagramScraperService
         return instagramPostDto;
     }
 
-    public async Task<List<InstagramDto.InstagramPostDto>> ScrapePosts(string username, byte pageNumber, byte pageSize = 12)
+    public async Task<List<InstagramPostDto>> ScrapePosts(string username, byte pageNumber, byte pageSize = 12)
     {
         string? endCursor = null;
         byte currentPage = 1;
@@ -157,14 +158,14 @@ public class InstagramScraperService : IInstagramScraperService
             request.Headers.Add("Connection", "keep-alive");
 
             var response = await _httpClient.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception("Response error.");
+                throw new Exception($"Response error.\nStatus code: {response.StatusCode}\nContent: {content}");
             }
 
-            var result = await response.Content.ReadAsStringAsync();
-            var parsedData = JsonConvert.DeserializeObject<dynamic>(result);
+            var parsedData = JsonConvert.DeserializeObject<dynamic>(content);
             var pageInfo = parsedData?["data"]?["xdt_api__v1__feed__user_timeline_graphql_connection"]?["page_info"];
 
             if (pageInfo is null)

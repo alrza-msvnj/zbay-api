@@ -24,7 +24,6 @@ public class ShopController : ControllerBase
 
     #region Apis
 
-    [Authorize]
     [HttpPost(nameof(CreateShop))]
     public async Task<IActionResult> CreateShop(ShopCreateDto shopCreateDto)
     {
