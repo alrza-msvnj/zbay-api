@@ -4,9 +4,9 @@ namespace Domain.Entities;
 
 public class Category
 {
-    public ushort Id { get; set; }
+    public int Id { get; set; }
     public required string Title { get; set; }
-    public ushort? ParentId { get; set; }
+    public int? ParentId { get; set; }
 
     [JsonIgnore]
     public virtual Category Parent { get; set; }

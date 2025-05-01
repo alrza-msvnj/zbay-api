@@ -20,7 +20,7 @@ public class CategoryRepository : ICategoryRepository
 
     #region Methods
 
-    public async Task<ushort> CreateCategory(CategoryCreateDto categoryCreateDto)
+    public async Task<int> CreateCategory(CategoryCreateDto categoryCreateDto)
     {
         var category = new Category
         {
@@ -45,7 +45,7 @@ public class CategoryRepository : ICategoryRepository
         return category.Id;
     }
 
-    public async Task<Category> GetCategoryById(ushort categoryId)
+    public async Task<Category> GetCategoryById(int categoryId)
     {
         return await _context.Category.FindAsync(categoryId);
     }

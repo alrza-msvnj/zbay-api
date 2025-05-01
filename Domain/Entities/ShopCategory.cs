@@ -4,8 +4,8 @@ namespace Domain.Entities;
 
 public class ShopCategory
 {
-    public uint ShopId { get; set; }
-    public ushort CategoryId { get; set; }
+    public long ShopId { get; set; }
+    public int CategoryId { get; set; }
 
     [JsonIgnore]
     public virtual Shop Shop { get; set; }

@@ -28,7 +28,7 @@ public class ShopRepository : IShopRepository
 
     #region Methods
 
-    public async Task<uint> CreateShop(ShopCreateDto shopCreateDto)
+    public async Task<long> CreateShop(ShopCreateDto shopCreateDto)
     {
         if (shopCreateDto.OwnerId is not null)
         {
@@ -96,12 +96,12 @@ public class ShopRepository : IShopRepository
         return shop.Id;
     }
 
-    public async Task<Shop> GetShopById(uint shopId)
+    public async Task<Shop> GetShopById(long shopId)
     {
         return await _context.Shop.Where(s => s.Id == shopId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
 
-    public async Task<Shop> GetShopByOwnerId(uint ownerId)
+    public async Task<Shop> GetShopByOwnerId(long ownerId)
     {
         return await _context.Shop.Where(s => !s.IsDeleted && s.OwnerId == ownerId).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).FirstOrDefaultAsync();
     }
@@ -159,7 +159,7 @@ public class ShopRepository : IShopRepository
         return await _context.Shop.Where(s => !s.IsDeleted && !s.IsValidated).Include(s => s.ShopCategories).ThenInclude(sc => sc.Category).ToListAsync();
     }
 
-    public async Task<uint> DeleteShop(uint shopId)
+    public async Task<long> DeleteShop(long shopId)
     {
         var shop = await GetShopById(shopId);
 
@@ -175,7 +175,7 @@ public class ShopRepository : IShopRepository
         return shop.Id;
     }
 
-    public async Task<uint> ApproveOrRejectShop(uint shopId, bool isApproved)
+    public async Task<long> ApproveOrRejectShop(long shopId, bool isApproved)
     {
         var shop = await GetShopById(shopId);
 

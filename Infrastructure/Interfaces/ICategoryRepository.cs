@@ -5,7 +5,7 @@ namespace Application.Interfaces;
 
 public interface ICategoryRepository
 {
-    Task<ushort> CreateCategory(CategoryCreateDto categoryCreateDto);
-    Task<Category> GetCategoryById(ushort categoryId);
+    Task<int> CreateCategory(CategoryCreateDto categoryCreateDto);
+    Task<Category> GetCategoryById(int categoryId);
     Task<List<Category>> GetAllCategories();
 }

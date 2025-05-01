@@ -30,7 +30,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet($"{nameof(GetCategoryById)}/{{categoryId}}")]
-    public async Task<IActionResult> GetCategoryById(ushort categoryId)
+    public async Task<IActionResult> GetCategoryById(int categoryId)
     {
         var category = await _categoryRepository.GetCategoryById(categoryId);
 

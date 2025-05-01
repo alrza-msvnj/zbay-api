@@ -6,13 +6,13 @@ namespace Application.Interfaces;
 
 public interface IShopRepository
 {
-    Task<uint> CreateShop(ShopCreateDto shopCreateDto);
-    Task<Shop> GetShopById(uint shopId);
-    Task<Shop> GetShopByOwnerId(uint ownerId);
+    Task<long> CreateShop(ShopCreateDto shopCreateDto);
+    Task<Shop> GetShopById(long shopId);
+    Task<Shop> GetShopByOwnerId(long ownerId);
     Task<Shop> GetShopByIgId(string igId);
     Task<Shop> GetShopByIgUsername(string igUsername);
     Task<List<Shop>> GetAllShops(GetAllDto shopGetAllDto);
     Task<List<Shop>> GetAllUnvalidatedShops();
-    Task<uint> DeleteShop(uint shopId);
-    Task<uint> ApproveOrRejectShop(uint shopId, bool isApproved);
+    Task<long> DeleteShop(long shopId);
+    Task<long> ApproveOrRejectShop(long shopId, bool isApproved);
 }

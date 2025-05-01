@@ -34,7 +34,7 @@ public class ShopController : ControllerBase
     }
 
     [HttpGet($"{nameof(GetShopById)}/{{shopId}}")]
-    public async Task<IActionResult> GetShopById(uint shopId)
+    public async Task<IActionResult> GetShopById(long shopId)
     {
         var shop = await _shopRepository.GetShopById(shopId);
 
@@ -44,7 +44,7 @@ public class ShopController : ControllerBase
     }
 
     [HttpGet($"{nameof(GetShopByUserId)}/{{userId}}")]
-    public async Task<IActionResult> GetShopByUserId(uint userId)
+    public async Task<IActionResult> GetShopByUserId(long userId)
     {
         var shop = await _shopRepository.GetShopByOwnerId(userId);
 
@@ -86,7 +86,7 @@ public class ShopController : ControllerBase
     }
 
     [HttpDelete($"{nameof(DeleteShop)}/{{shopId}}")]
-    public async Task<IActionResult> DeleteShop(uint shopId)
+    public async Task<IActionResult> DeleteShop(long shopId)
     {
         await _shopRepository.DeleteShop(shopId);
 
@@ -94,7 +94,7 @@ public class ShopController : ControllerBase
     }
 
     [HttpGet($"{nameof(ApproveOrRejectShop)}/{{shopId}}/{{isApproved}}")]
-    public async Task<IActionResult> ApproveOrRejectShop(uint shopId, bool isApproved)
+    public async Task<IActionResult> ApproveOrRejectShop(long shopId, bool isApproved)
     {
         await _shopRepository.ApproveOrRejectShop(shopId, isApproved);
 

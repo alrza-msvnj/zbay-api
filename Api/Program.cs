@@ -54,6 +54,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<Context>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddHttpClient();
 builder.Services.Configure<InstagramApiKeys>(builder.Configuration.GetSection("InstagramApiSettings"));
@@ -105,15 +106,15 @@ var app = builder.Build();
 app.UseCors("AllowReactApp");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.DocExpansion(DocExpansion.None);
         options.DefaultModelsExpandDepth(-1); // Hide the schemas/models section
     });
-}
+//}
 
 app.UseHttpsRedirection();
 

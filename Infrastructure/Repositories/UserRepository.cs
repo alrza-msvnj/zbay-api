@@ -23,7 +23,7 @@ public class UserRepository : IUserRepository
 
     #region Methods
 
-    public async Task<uint> CreateTemporaryUser(string phoneNumber)
+    public async Task<long> CreateTemporaryUser(string phoneNumber)
     {
         if (!Regex.IsMatch(phoneNumber, "^9\\d{9}$"))
         {
@@ -71,7 +71,7 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task<uint> SetNewPasswordForUser(UserCredentialsDto userCredentialsDto)
+    public async Task<long> SetNewPasswordForUser(UserCredentialsDto userCredentialsDto)
     {
         var user = await GetUserByPhoneNumber(userCredentialsDto.PhoneNumber);
 
@@ -82,7 +82,7 @@ public class UserRepository : IUserRepository
         return user.Id;
     }
 
-    public async Task<User> GetUserById(uint userId)
+    public async Task<User> GetUserById(long userId)
     {
         return await _context.User.FindAsync(userId);
     }
@@ -107,7 +107,7 @@ public class UserRepository : IUserRepository
         return await _context.User.FirstOrDefaultAsync(u => !u.IsDeleted && u.PhoneNumber == userGetByCredentialsDto.PhoneNumber && u.Password == userGetByCredentialsDto.Password);
     }
 
-    public async Task<User> GetShopOwnerByShopId(uint shopId)
+    public async Task<User> GetShopOwnerByShopId(long shopId)
     {
         return await _context.User.FirstOrDefaultAsync(u => !u.IsDeleted && u.ShopId == shopId);
     }
@@ -117,7 +117,7 @@ public class UserRepository : IUserRepository
         return await _context.User.Where(u => !u.IsDeleted && u.Role == UserRole.Admin).ToListAsync();
     }
 
-    public async Task<uint> DeleteUser(uint userId)
+    public async Task<long> DeleteUser(long userId)
     {
         var user = await GetUserById(userId);
 
@@ -133,7 +133,7 @@ public class UserRepository : IUserRepository
         return user.Id;
     }
 
-    public async Task<ushort> SetLastOtp(uint userId)
+    public async Task<int> SetLastOtp(long userId)
     {
         var user = await GetUserById(userId);
 
@@ -142,8 +142,7 @@ public class UserRepository : IUserRepository
             throw new InvalidOperationException("User does not exist");
         }
 
-        var random = new Random();
-        var code = Convert.ToUInt16(random.Next(1000, 9999));
+        var code = new Random().Next(1000, 9999);
 
         user.LastOtp = code;
 

@@ -21,8 +21,8 @@ public static class InstagramScraperFactory
                 Hieght = Convert.ToUInt16(parsedData["data"]?["xdt_shortcode_media"]?["dimensions"]?["height"]?.ToString()),
                 Width = Convert.ToUInt16(parsedData["data"]?["xdt_shortcode_media"]?["dimensions"]?["width"]?.ToString())
             },
-            LikeCount = Convert.ToUInt32(parsedData["data"]?["xdt_shortcode_media"]?["edge_media_preview_like"]?["count"]?.ToString()),
-            CommentCount = Convert.ToUInt32(parsedData["data"]?["xdt_shortcode_media"]?["edge_media_to_parent_comment"]?["count"]?.ToString()),
+            LikeCount = long.Parse(parsedData["data"]?["xdt_shortcode_media"]?["edge_media_preview_like"]?["count"]?.ToString()),
+            CommentCount = long.Parse(parsedData["data"]?["xdt_shortcode_media"]?["edge_media_to_parent_comment"]?["count"]?.ToString()),
             IsVideo = bool.Parse(parsedData["data"]?["xdt_shortcode_media"]?["is_video"]?.ToString()),
             VideoUrl = parsedData["data"]?["xdt_shortcode_media"]["video_url"]?.ToString(),
             Owner = new Owner
@@ -31,7 +31,7 @@ public static class InstagramScraperFactory
                 Username = parsedData["data"]?["xdt_shortcode_media"]?["owner"]?["username"]?.ToString(),
                 FullName = parsedData["data"]?["xdt_shortcode_media"]?["owner"]?["full_name"]?.ToString(),
                 ProfilePictureUrl = parsedData["data"]?["xdt_shortcode_media"]?["owner"]?["profile_pic_url"]?.ToString(),
-                Followers = Convert.ToUInt32(parsedData["data"]?["xdt_shortcode_media"]?["owner"]?["edge_followed_by"]?["count"]?.ToString()),
+                Followers = long.Parse(parsedData["data"]?["xdt_shortcode_media"]?["owner"]?["edge_followed_by"]?["count"]?.ToString()),
                 IsVerified = bool.Parse(parsedData["data"]?["xdt_shortcode_media"]?["owner"]?["is_verified"]?.ToString())
             }
         };
@@ -113,8 +113,8 @@ public static class InstagramScraperFactory
                     Hieght = Convert.ToUInt16(instagramPost["node"]?["original_height"]?.ToString()),
                     Width = Convert.ToUInt16(instagramPost["node"]?["original_width"]?.ToString())
                 },
-                LikeCount = Convert.ToUInt32(instagramPost["node"]?["like_count"]?.ToString()),
-                CommentCount = Convert.ToUInt32(instagramPost["node"]?["comment_count"]?.ToString()),
+                LikeCount = long.Parse(instagramPost["node"]?["like_count"]?.ToString()),
+                CommentCount = long.Parse(instagramPost["node"]?["comment_count"]?.ToString()),
                 Owner = new Owner
                 {
                     Id = instagramPost["node"]?["user"]?["pk"]?.ToString(),

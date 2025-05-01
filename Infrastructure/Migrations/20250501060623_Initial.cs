@@ -92,7 +92,8 @@ namespace Infrastructure.Migrations
                 name: "Product",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Uuid = table.Column<Guid>(type: "uuid", nullable: false),
                     IgId = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: false),
@@ -167,7 +168,7 @@ namespace Infrastructure.Migrations
                 name: "ProductCategory",
                 columns: table => new
                 {
-                    ProductId = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -191,7 +192,8 @@ namespace Infrastructure.Migrations
                 name: "ProductIgCarouselMedia",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Uuid = table.Column<Guid>(type: "uuid", nullable: false),
                     IgId = table.Column<string>(type: "text", nullable: true),
                     Code = table.Column<string>(type: "text", nullable: true),
@@ -199,7 +201,7 @@ namespace Infrastructure.Migrations
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
                     VideoUrl = table.Column<string>(type: "text", nullable: true),
                     Order = table.Column<byte>(type: "smallint", nullable: false),
-                    ProductId = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
                     IsVideo = table.Column<bool>(type: "boolean", nullable: true),
                     Dimensions_Hieght = table.Column<int>(type: "integer", nullable: true),
                     Dimensions_Width = table.Column<int>(type: "integer", nullable: true)

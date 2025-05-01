@@ -107,7 +107,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet($"{nameof(GetUserById)}/{{userId}}")]
-    public async Task<IActionResult> GetUserById(uint userId)
+    public async Task<IActionResult> GetUserById(long userId)
     {
         var user = await _userRepository.GetUserById(userId);
 
@@ -115,7 +115,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet($"{nameof(GetShopOwnerByShopId)}/{{shopId}}")]
-    public async Task<IActionResult> GetShopOwnerByShopId(uint shopId)
+    public async Task<IActionResult> GetShopOwnerByShopId(long shopId)
     {
         var shopOwner = await _userRepository.GetShopOwnerByShopId(shopId);
 
@@ -131,7 +131,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete($"{nameof(DeleteUser)}/{{userId}}")]
-    public async Task<IActionResult> DeleteUser(uint userId)
+    public async Task<IActionResult> DeleteUser(long userId)
     {
         await _userRepository.DeleteUser(userId);
 

@@ -4,7 +4,7 @@ namespace Domain.Entities;
 
 public class ProductIgCarouselMedia
 {
-    public ulong Id { get; set; }
+    public long Id { get; set; }
     public Guid Uuid { get; set; }
     public string? IgId { get; set; }
     public string? Code { get; set; }
@@ -12,7 +12,7 @@ public class ProductIgCarouselMedia
     public string? ImageUrl { get; set; }
     public string? VideoUrl { get; set; }
     public byte Order { get; set; }
-    public ulong ProductId { get; set; }
+    public long ProductId { get; set; }
     public bool? IsVideo { get; set; }
     public Dimensions? Dimensions { get; set; }
 
