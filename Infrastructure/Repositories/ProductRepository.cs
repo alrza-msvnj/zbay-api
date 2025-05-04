@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Dtos;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -268,15 +269,22 @@ public class ProductRepository : IProductRepository
 
     public async Task<List<Product>> GetAllProducts(GetAllDto getAllDto)
     {
+        IQueryable<Product> query;
+
         if (getAllDto.CategoryIds is null || getAllDto.CategoryIds.Count == 0)
         {
-            var query = _context.Product.Where(p => !p.IsDeleted && p.Name.Contains(getAllDto.SearchTerm));
+            query = _context.Product.Where(p => !p.IsDeleted && p.Name.Contains(getAllDto.SearchTerm));
 
             if (getAllDto.PageNumber > 0 && getAllDto.PageSize > 0)
             {
                 query = query
                     .Skip((getAllDto.PageNumber - 1) * getAllDto.PageSize)
                     .Take(getAllDto.PageSize);
+            }
+
+            if (getAllDto.SortType is not null)
+            {
+                query = SortProducts(query, getAllDto.SortType.Value);
             }
 
             return await query.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
@@ -296,12 +304,14 @@ public class ProductRepository : IProductRepository
         }
 
         var productIds = await productIdsQuery.ToListAsync();
+        query = _context.Product.Where(p => productIds.Contains(p.Id));
 
-        return await _context.Product
-            .Where(p => productIds.Contains(p.Id))
-            .Include(p => p.ProductCategories)
-            .ThenInclude(pc => pc.Category)
-            .ToListAsync();
+        if (getAllDto.SortType is not null)
+        {
+            query = SortProducts(query, getAllDto.SortType.Value);
+        }
+
+        return await query.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
     }
 
     public async Task<List<Product>> GetAllProductsByShopId(long shopId, int pageNumber, int pageSize)
@@ -358,6 +368,40 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
 
         return productId;
+    }
+
+    #endregion
+
+    #region Utilities
+
+    private IQueryable<Product> SortProducts(IQueryable<Product> query, SortType sortType)
+    {
+        switch (sortType)
+        {
+            case SortType.Featured:
+                return query;
+
+            case SortType.NameAsc:
+                return query.OrderBy(p => p.Name);
+
+            case SortType.NameDesc:
+                return query.OrderByDescending(p => p.Name);
+
+            case SortType.PriceAsc:
+                return query.OrderBy(p => p.Price);
+
+            case SortType.PriceDesc:
+                return query.OrderByDescending(p => p.Price);
+
+            case SortType.CreateDateAsc:
+                return query.OrderBy(p => p.CreateDate);
+
+            case SortType.CreateDateDesc:
+                return query.OrderByDescending(p => p.CreateDate);
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(sortType), sortType, null);
+        }
     }
 
     #endregion

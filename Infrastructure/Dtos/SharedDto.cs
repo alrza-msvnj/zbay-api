@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Dtos;
+﻿using Domain.Enums;
+
+namespace Infrastructure.Dtos;
 
 public class SharedDto
 {
@@ -8,5 +10,6 @@ public class SharedDto
         public int PageSize { get; set; }
         public required string SearchTerm { get; set; }
         public List<int>? CategoryIds { get; set; }
+        public SortType? SortType { get; set; }
     }
 }
