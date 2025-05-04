@@ -381,22 +381,13 @@ public class ProductRepository : IProductRepository
             case SortType.Featured:
                 return query;
 
-            case SortType.NameAsc:
-                return query.OrderBy(p => p.Name);
-
-            case SortType.NameDesc:
-                return query.OrderByDescending(p => p.Name);
-
             case SortType.PriceAsc:
                 return query.OrderBy(p => p.Price);
 
             case SortType.PriceDesc:
                 return query.OrderByDescending(p => p.Price);
 
-            case SortType.CreateDateAsc:
-                return query.OrderBy(p => p.CreateDate);
-
-            case SortType.CreateDateDesc:
+            case SortType.Newest:
                 return query.OrderByDescending(p => p.CreateDate);
 
             default:
