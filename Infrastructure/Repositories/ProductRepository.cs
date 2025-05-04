@@ -42,6 +42,7 @@ public class ProductRepository : IProductRepository
             HasDiscount = productCreateDto.DiscountPercentage > 0,
             IsAvailable = productCreateDto.Stock > 0,
             IsNew = true,
+            IsValidated = false,
             IsDeleted = false,
             CreateDate = DateTime.UtcNow,
             Images = productCreateDto.Images
@@ -85,6 +86,7 @@ public class ProductRepository : IProductRepository
             HasDiscount = false,
             IsAvailable = true,
             IsNew = true,
+            IsValidated = false,
             IsDeleted = false,
             IgIsVideo = instagramPostDto.IsVideo,
             CreateDate = DateTime.UtcNow,
@@ -172,6 +174,7 @@ public class ProductRepository : IProductRepository
                 HasDiscount = false,
                 IsAvailable = true,
                 IsNew = true,
+                IsValidated = false,
                 IsDeleted = false,
                 IgIsVideo = instagramPostDto.IsVideo,
                 CreateDate = DateTime.UtcNow,

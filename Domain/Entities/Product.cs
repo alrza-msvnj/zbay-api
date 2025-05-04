@@ -24,6 +24,7 @@ public class Product
     public bool HasDiscount { get; set; }
     public bool IsAvailable { get; set; }
     public bool IsNew { get; set; }
+    public bool IsValidated { get; set; }
     public bool IsDeleted { get; set; }
     public bool? IgIsVideo { get; set; }
     public DateTime CreateDate { get; set; }
