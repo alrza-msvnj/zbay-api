@@ -62,7 +62,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IInstagramScraperService, InstagramScraperService>();
+builder.Services.AddScoped<IInstagramScraperService, ApifyInstagramScraperService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
